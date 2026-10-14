@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account | StyleSpectrum</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .auth-page {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 32px 16px;
+      background: #faf7f2;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 480px;
+      padding: 32px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.08);
+    }
+
+    .auth-card h1 {
+      margin: 8px 0;
+      font-size: 28px;
+    }
+
+    .auth-card p {
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .role-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 18px 0 10px;
+    }
+
+    .role-option {
+      position: relative;
+    }
+
+    .role-option input {
+      display: none;
+    }
+
+    .role-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 8px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: #444;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .role-label span {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .role-label small {
+      font-size: 11px;
+      font-weight: 400;
+      color: #777;
+    }
+
+    .role-option input:checked + .role-label {
+      border-color: #8c3b4a;
+      background: #fdf5f6;
+      color: #8c3b4a;
+    }
+
+    .auth-card label {
+      display: block;
+      margin: 14px 0 6px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .auth-card input {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font: inherit;
+      box-sizing: border-box;
+    }
+
+    .auth-card input:focus {
+      border-color: #8c3b4a;
+      outline: none;
+    }
+
+    .shopkeeper-section {
+      background: #fdf8f5;
+      border: 1px dashed #d5b8ab;
+      padding: 12px 14px;
+      border-radius: 10px;
+      margin-top: 14px;
+    }
+
+    .shopkeeper-section h4 {
+      margin: 0 0 6px;
+      color: #8c3b4a;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .auth-submit {
+      width: 100%;
+      margin-top: 22px;
+      padding: 13px;
+      border: none;
+      border-radius: 8px;
+      background: #8c3b4a;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .auth-submit:hover {
+      background: #732f3c;
+    }
+
+    .auth-message {
+      margin-top: 14px;
+      overflow-wrap: anywhere;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .auth-footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .auth-footer a, .auth-back {
+      color: #8c3b4a;
+      font-weight: 600;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <main class="auth-page">
+    <section class="auth-card">
+      <a class="auth-back" href="index.html">← Back to StyleSpectrum</a>
+      <h1>Create your account</h1>
+      <p>Choose your account type to register.</p>
+
+      <form id="registerForm">
+        <label>I want to register as:</label>
+        <div class="role-selector">
+          <label class="role-option">
+            <input type="radio" name="role" value="customer" checked>
+            <div class="role-label">
+              <span>🛒</span>
+              Customer
+              <small>Shop fashion pieces</small>
+            </div>
+          </label>
+
+          <label class="role-option">
+            <input type="radio" name="role" value="shopkeeper">
+            <div class="role-label">
+              <span>🏪</span>
+              Shopkeeper
+              <small>Sell & add products</small>
+            </div>
+          </label>
+        </div>
+
+        <label for="name">Full Name</label>
+        <input id="name" name="name" type="text"
+               placeholder="Enter your full name"
+               autocomplete="name" required>
+
+        <label for="email">Email Address</label>
+        <input id="email" name="email" type="email"
+               placeholder="you@example.com"
+               autocomplete="email" required>
+
+        <label for="mobile">Mobile Number</label>
+        <input id="mobile" name="mobile" type="tel"
+               placeholder="10-digit mobile number"
+               inputmode="numeric" pattern="[0-9]{10}"
+               maxlength="10" autocomplete="tel" required>
+
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password"
+               placeholder="At least 8 characters"
+               minlength="8" autocomplete="new-password" required>
+
+        <!-- Shopkeeper specific fields -->
+        <div class="shopkeeper-section" id="shopkeeperFields" style="display: none;">
+          <h4>🏪 Shopkeeper Details</h4>
+          <label for="shopName" style="margin-top: 4px;">Shop Name (दुकान का नाम) *</label>
+          <input id="shopName" name="shopName" type="text"
+                 placeholder="e.g. Spectrum Boutique / Sharma Handloom">
+
+          <label for="shopAddress">Shop City / Address</label>
+          <input id="shopAddress" name="shopAddress" type="text"
+                 placeholder="e.g. Chandni Chowk, Delhi">
+        </div>
+
+        <button class="auth-submit" type="submit" id="submitBtn">
+          Create Account
+        </button>
+
+        <p id="registerMessage" class="auth-message"
+           role="status" aria-live="polite"></p>
+      </form>
+
+      <div class="auth-footer">
+        Already have an account?
+        <a href="login.html">Login</a>
+      </div>
+    </section>
+  </main>
+  <script src="register.js"></script>
+</body>
+</html>

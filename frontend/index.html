@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#211713">
+  <title>StyleSpectrum | Your Style, Your Spectrum</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Additional styles for e-commerce modals, badges & orders */
+    .role-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    .badge-customer {
+      background: #eaf3ee;
+      color: #2e6945;
+    }
+    .badge-shopkeeper {
+      background: #fcf1e8;
+      color: #a45325;
+    }
+    .checkout-summary {
+      background: #faf7f2;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+    .checkout-item-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      color: #555;
+    }
+    .order-card {
+      background: #faf7f2;
+      border: 1px solid #ebdcd2;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+    }
+    .order-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px dashed #d9c8bd;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+    }
+    .order-id {
+      font-weight: 700;
+      font-size: 13px;
+      color: #8c3b4a;
+    }
+    .order-status {
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #e1f5fe;
+      color: #0277bd;
+    }
+    .order-item-mini {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="announcement">
+    YOUR STYLE, YOUR SPECTRUM ✦ DISCOVER YOUR NEXT LOOK
+  </div>
+
+  <header class="header">
+    <a href="#" class="brand">
+      <span class="brand-icon">S</span>
+      <span>Style<span class="brand-light">Spectrum</span>
+        <small>FASHION FOR EVERY YOU</small>
+      </span>
+    </a>
+
+    <nav class="nav">
+      <a href="#home">Home</a>
+      <a href="#categories">Categories</a>
+      <a href="#shop">Shop All</a>
+      <a href="#about">Our Story</a>
+    </nav>
+
+    <!-- Header Actions with Clean DOM Nesting -->
+    <div class="header-actions">
+      <!-- Shopkeeper quick add button (ONLY for shopkeeper) -->
+      <button class="primary-btn" id="headerAddProductBtn" type="button" style="display: none; padding: 8px 14px; font-size: 12px;">
+        ＋ Add Product
+      </button>
+
+      <!-- Customer Orders Button (ONLY for customer) -->
+      <button class="outline-btn" id="myOrdersBtn" type="button" style="display: none; padding: 8px 14px; font-size: 12px;">
+        📦 My Orders
+      </button>
+
+      <div class="user-profile" id="userProfile">
+        <button class="outline-btn" id="profileToggle" type="button">
+          👤 <span id="profileName">My Profile</span> ▾
+        </button>
+
+        <div class="profile-menu" id="profileMenu" hidden>
+          <p id="profileEmail" style="font-size: 12px; margin: 0 0 4px; color: #666;"></p>
+          <div id="profileRoleBadge"></div>
+          <hr style="border: none; border-top: 1px solid #eee; margin: 8px 0;">
+          <button class="primary-btn" id="logoutBtn" type="button" style="width: 100%; padding: 8px;">
+            Logout
+          </button>
+        </div>
+      </div>
+
+      <button class="icon-btn" id="searchFocus" aria-label="Search">⌕</button>
+      <button class="icon-btn" id="wishlistToggle" aria-label="Wishlist">
+        ♡ <span id="wishlistCount">0</span>
+      </button>
+      <button class="cart-btn" id="cartToggle">
+        Bag <span id="cartCount">0</span>
+      </button>
+      <button class="menu-btn" id="menuToggle" aria-label="Open menu">☰</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-content">
+        <span class="eyebrow">THE NEW SEASON COLLECTION</span>
+        <h1>Wear your<br><em>own story.</em></h1>
+        <p>From everyday essentials to statement looks,
+          discover fashion that feels uniquely you.</p>
+        <div class="hero-actions">
+          <a href="#shop" class="primary-btn">Explore Collection ↗</a>
+          <a href="#categories" class="text-link">Discover Categories</a>
+        </div>
+        <div class="hero-note">
+          <span>✦</span> A style for every mood, a look for every moment.
+        </div>
+      </div>
+      <div class="hero-visual">
+        <img
+          src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1100&q=85"
+          alt="Fashion collection"
+        >
+        <div class="hero-stamp">STYLE<br>WITHOUT<br>LIMITS ✳</div>
+        <div class="hero-caption">
+          <span>01 / NEW EDIT</span>
+          <span>Find your signature style.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="trust-strip">
+      <span>✳ Curated Styles</span>
+      <span>✳ Everyday to Occasion</span>
+      <span>✳ Fashion for Everyone</span>
+      <span>✳ Your Style, Your Rules</span>
+    </section>
+
+    <section class="section categories-section" id="categories">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">FIND YOUR FIT</span>
+          <h2>Shop by <em>category.</em></h2>
+        </div>
+        <p>Different moods. Different moments.<br>One place to find your style.</p>
+      </div>
+
+      <div class="category-grid">
+        <button class="category-card cat-ladies" data-category="Ladies Wear">
+          <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=650&q=80" alt="Ladies fashion">
+          <span class="category-overlay">
+            <small>01 — WOMEN</small>
+            <strong>Ladies Wear</strong>
+            <span>Explore collection ↗</span>
+          </span>
+        </button>
+
+        <button class="category-card cat-sarees" data-category="Sarees">
+          <img src="https://images.unsplash.com/photo-1610030469668-8e9f641aaf24?auto=format&fit=crop&w=650&q=80" alt="Saree collection">
+          <span class="category-overlay">
+            <small>02 — ETHNIC</small>
+            <strong>Sarees</strong>
+            <span>Grace in every drape ↗</span>
+          </span>
+        </button>
+
+        <button class="category-card cat-gents" data-category="Gents Wear">
+          <img src="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=650&q=80" alt="Men's fashion">
+          <span class="category-overlay">
+            <small>03 — MEN</small>
+            <strong>Gents Wear</strong>
+            <span>Explore collection ↗</span>
+          </span>
+        </button>
+
+        <button class="category-card cat-kids" data-category="Kids Wear">
+          <img src="https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=650&q=80" alt="Kids fashion">
+          <span class="category-overlay">
+            <small>04 — LITTLE ONES</small>
+            <strong>Kids Wear</strong>
+            <span>Little looks, big joy ↗</span>
+          </span>
+        </button>
+
+        <button class="category-card cat-footwear" data-category="Footwear">
+          <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=650&q=80" alt="Footwear">
+          <span class="category-overlay">
+            <small>05 — FINISHING TOUCH</small>
+            <strong>Footwear</strong>
+            <span>Step into style ↗</span>
+          </span>
+        </button>
+
+        <button class="category-card cat-accessories" data-category="Accessories">
+          <img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?auto=format&fit=crop&w=650&q=80" alt="Fashion accessories">
+          <span class="category-overlay">
+            <small>06 — THE DETAILS</small>
+            <strong>Accessories</strong>
+            <span>Complete your look ↗</span>
+          </span>
+        </button>
+      </div>
+    </section>
+
+    <section class="promo-banner">
+      <div>
+        <span class="eyebrow">A LITTLE SOMETHING NEW</span>
+        <h2>Make room for<br><em>your next favourite.</em></h2>
+      </div>
+      <a href="#shop" class="light-btn">Shop the edit ↗</a>
+    </section>
+
+    <section class="section shop-section" id="shop">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">THE STYLE EDIT</span>
+          <h2 id="shopTitle">Pieces you'll <em>love.</em></h2>
+          <p class="muted" id="resultCount">Discover the collection.</p>
+        </div>
+        <button class="outline-btn" id="showAll">View all products ↗</button>
+      </div>
+
+      <div class="shop-toolbar">
+        <label class="search-box">
+          <span>⌕</span>
+          <input id="searchInput" type="search" placeholder="Search outfits, styles, products...">
+        </label>
+
+        <div class="toolbar-filters">
+          <select id="categoryFilter" aria-label="Filter by category">
+            <option value="All">All Categories</option>
+            <option value="Ladies Wear">Ladies Wear</option>
+            <option value="Sarees">Sarees</option>
+            <option value="Gents Wear">Gents Wear</option>
+            <option value="Kids Wear">Kids Wear</option>
+            <option value="Footwear">Footwear</option>
+            <option value="Accessories">Accessories</option>
+          </select>
+
+          <select id="sortFilter" aria-label="Sort products">
+            <option value="featured">Featured</option>
+            <option value="low">Price: Low to High</option>
+            <option value="high">Price: High to Low</option>
+            <option value="name">Name: A to Z</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="product-grid" id="productGrid"></div>
+      <div class="empty-state" id="emptyState" hidden>
+        <span>⌕</span>
+        <h3>No pieces found</h3>
+        <p>Try another search or category.</p>
+        <button class="primary-btn" id="resetFilters">Clear filters</button>
+      </div>
+    </section>
+
+    <!-- SHOPKEEPER BANNER: Strictly hidden for Customer, only displayed when shopkeeper logs in! -->
+    <section class="shopkeeper-banner" id="shopkeeperBanner" style="display: none;">
+      <div>
+        <span class="eyebrow">SELLER / SHOPKEEPER DASHBOARD</span>
+        <h2>Manage your catalog<br><em>& showcase new styles.</em></h2>
+        <p id="shopkeeperBannerSubtitle">Add brand new products directly into StyleSpectrum MongoDB store.</p>
+      </div>
+      <button class="primary-btn" id="openProductForm">＋ Add a Product</button>
+    </section>
+
+    <section class="newsletter" id="about">
+      <span class="eyebrow">A NOTE FROM US</span>
+      <h2>Fashion should feel<br><em>like you.</em></h2>
+      <p>StyleSpectrum brings different styles together in one place — so you can find the look that feels right for you.</p>
+      <a href="#categories" class="text-link">Find your spectrum ↗</a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <a href="#home" class="brand footer-brand">
+      <span class="brand-icon">S</span>
+      <span>Style<span class="brand-light">Spectrum</span>
+        <small>YOUR STYLE, YOUR SPECTRUM</small>
+      </span>
+    </a>
+    <p>Different styles. One destination.</p>
+    <span>© <span id="year"></span> StyleSpectrum</span>
+  </footer>
+
+  <!-- CART BAG DRAWER -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="drawer" id="cartDrawer" aria-label="Shopping bag">
+    <div class="drawer-header">
+      <div>
+        <span class="eyebrow">YOUR SELECTION</span>
+        <h2>Your Bag <span id="drawerCount">(0)</span></h2>
+      </div>
+      <button class="close-btn" id="closeCart" aria-label="Close bag">×</button>
+    </div>
+    <div class="drawer-items" id="cartItems"></div>
+    <div class="drawer-footer">
+      <div class="total-row"><span>Subtotal</span><strong id="cartTotal">₹0</strong></div>
+      <p class="muted">Free shipping on orders above ₹999. Fast delivery across India.</p>
+      <button class="primary-btn full-btn" id="checkoutBtn">Continue to Checkout ↗</button>
+    </div>
+  </aside>
+
+  <!-- CHECKOUT MODAL (For Customers) -->
+  <div class="modal-backdrop" id="checkoutModal" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
+      <div class="modal-header">
+        <div>
+          <span class="eyebrow">SECURE CHECKOUT</span>
+          <h2 id="checkoutTitle">Shipping & Payment</h2>
+        </div>
+        <button class="close-btn" id="closeCheckout" aria-label="Close checkout">×</button>
+      </div>
+
+      <div class="checkout-summary" id="checkoutSummary">
+        <!-- Injected via script.js -->
+      </div>
+
+      <form id="checkoutForm">
+        <label>Full Delivery Name *
+          <input name="fullName" id="checkFullName" required placeholder="Receiver's name">
+        </label>
+        <div class="form-row">
+          <label>Mobile Number *
+            <input name="mobile" id="checkMobile" type="tel" pattern="[0-9]{10}" maxlength="10" required placeholder="10-digit number">
+          </label>
+          <label>Pincode *
+            <input name="pincode" id="checkPincode" required maxlength="6" placeholder="6-digit pincode">
+          </label>
+        </div>
+        <label>Delivery Address (House/Street/Area) *
+          <textarea name="addressLine" id="checkAddress" rows="2" required placeholder="Complete delivery address"></textarea>
+        </label>
+        <div class="form-row">
+          <label>City *
+            <input name="city" id="checkCity" required placeholder="e.g. Jaipur, Delhi, Mumbai">
+          </label>
+          <label>State
+            <input name="state" id="checkState" placeholder="e.g. Rajasthan, Maharashtra" value="India">
+          </label>
+        </div>
+        <label>Payment Method
+          <select name="paymentMethod" id="checkPaymentMethod">
+            <option value="COD">Cash on Delivery (COD)</option>
+            <option value="UPI">UPI / GooglePay / PhonePe (Demo)</option>
+            <option value="CARD">Debit / Credit Card (Demo)</option>
+          </select>
+        </label>
+        <button type="submit" class="primary-btn full-btn" id="placeOrderBtn" style="margin-top: 14px;">
+          Confirm & Place Order (<span id="checkoutTotalBtn">₹0</span>) ↗
+        </button>
+      </form>
+    </section>
+  </div>
+
+  <!-- MY ORDERS MODAL (For Customers) -->
+  <div class="modal-backdrop" id="ordersModal" hidden>
+    <section class="modal" role="dialog" aria-modal="true" style="max-width: 600px;">
+      <div class="modal-header">
+        <div>
+          <span class="eyebrow">CUSTOMER DASHBOARD</span>
+          <h2>My Order History</h2>
+        </div>
+        <button class="close-btn" id="closeOrdersModal" aria-label="Close orders">×</button>
+      </div>
+      <div class="orders-list" id="ordersListContainer" style="max-height: 400px; overflow-y: auto; padding: 4px;">
+        <p class="muted">Loading orders...</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- PRODUCT ADD MODAL (Only for Shopkeeper) -->
+  <div class="modal-backdrop" id="productModal" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <div>
+          <span class="eyebrow">SHOPKEEPER INVENTORY</span>
+          <h2 id="modalTitle">Add a product to store</h2>
+        </div>
+        <button class="close-btn" id="closeProductForm" aria-label="Close form">×</button>
+      </div>
+
+      <p class="muted" style="margin-top: 0;">This product will be saved into MongoDB (stylespectrum_shopkeeper) and become available to all customers.</p>
+
+      <form id="productForm">
+        <label>Product name *
+          <input name="name" id="prodName" required maxlength="100" placeholder="e.g. Classic Embroidered Kurti">
+        </label>
+        <div class="form-row">
+          <label>Price (₹) *
+            <input name="price" id="prodPrice" required type="number" min="1" step="1" placeholder="1499">
+          </label>
+          <label>Original / MRP (₹)
+            <input name="originalPrice" id="prodOrigPrice" type="number" min="0" step="1" placeholder="1999">
+          </label>
+        </div>
+        <div class="form-row">
+          <label>Category *
+            <select name="category" id="prodCategory" required>
+              <option value="Ladies Wear">Ladies Wear</option>
+              <option value="Sarees">Sarees</option>
+              <option value="Gents Wear">Gents Wear</option>
+              <option value="Kids Wear">Kids Wear</option>
+              <option value="Footwear">Footwear</option>
+              <option value="Accessories">Accessories</option>
+            </select>
+          </label>
+          <label>Stock quantity *
+            <input name="stock" id="prodStock" type="number" min="0" step="1" value="15" required>
+          </label>
+        </div>
+        <label>Image URL
+          <input name="image" id="prodImage" type="url" placeholder="https://images.unsplash.com/... or image link">
+        </label>
+        <label>Description *
+          <textarea name="description" id="prodDesc" maxlength="400" rows="3" required placeholder="Describe fabrics, styling tips, fit..."></textarea>
+        </label>
+        <button type="submit" class="primary-btn full-btn" id="saveProductBtn">Save to Live Store ↗</button>
+      </form>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+ 
+  <!-- Authentication Guard checking localStorage or sessionStorage -->
+  <script>
+    const authToken = localStorage.getItem("stylespectrum_token") || sessionStorage.getItem("stylespectrum_token");
+    if (!authToken) {
+      window.location.replace("login.html");
+    }
+  </script>
+
+  <script src="script.js"></script>
+</body>
+</html>
