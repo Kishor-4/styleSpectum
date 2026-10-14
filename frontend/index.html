@@ -10,7 +10,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
-    /* Additional styles for e-commerce modals, badges & orders */
     .role-badge {
       display: inline-block;
       padding: 3px 8px;
@@ -50,6 +49,7 @@
       border-radius: 10px;
       padding: 14px 16px;
       margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
     }
     .order-card-header {
       display: flex;
@@ -65,18 +65,51 @@
       color: #8c3b4a;
     }
     .order-status {
-      padding: 3px 8px;
+      padding: 3px 9px;
       border-radius: 12px;
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
       background: #e1f5fe;
       color: #0277bd;
     }
+    .status-shipped {
+      background: #fff3e0;
+      color: #e65100;
+    }
+    .status-delivered {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
     .order-item-mini {
       display: flex;
-      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
       font-size: 13px;
-      margin-bottom: 4px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #f0e6de;
+      padding-bottom: 6px;
+    }
+    .order-item-mini img {
+      width: 44px;
+      height: 52px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    .order-customer-box {
+      background: #f5ede6;
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-top: 8px;
+      font-size: 12px;
+      color: #444;
+    }
+    .status-select {
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background: white;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -100,11 +133,15 @@
       <a href="#about">Our Story</a>
     </nav>
 
-    <!-- Header Actions with Clean DOM Nesting -->
+    <!-- Header Actions -->
     <div class="header-actions">
-      <!-- Shopkeeper quick add button (ONLY for shopkeeper) -->
+      <!-- Shopkeeper Controls (ONLY for shopkeeper) -->
       <button class="primary-btn" id="headerAddProductBtn" type="button" style="display: none; padding: 8px 14px; font-size: 12px;">
         ＋ Add Product
+      </button>
+
+      <button class="primary-btn" id="shopOrdersBtn" type="button" style="display: none; padding: 8px 14px; font-size: 12px; background: #6b333e;">
+        📋 Customer Orders
       </button>
 
       <!-- Customer Orders Button (ONLY for customer) -->
@@ -167,10 +204,10 @@
     </section>
 
     <section class="trust-strip">
-      <span>✳ Curated Styles</span>
-      <span>✳ Everyday to Occasion</span>
-      <span>✳ Fashion for Everyone</span>
-      <span>✳ Your Style, Your Rules</span>
+      <span>✳ Handcrafted & Curated Styles</span>
+      <span>✳ 100% Genuine Fabrics</span>
+      <span>✳ Fast Delivery Across India</span>
+      <span>✳ Easy Returns & Exchanges</span>
     </section>
 
     <section class="section categories-section" id="categories">
@@ -184,7 +221,7 @@
 
       <div class="category-grid">
         <button class="category-card cat-ladies" data-category="Ladies Wear">
-          <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=650&q=80" alt="Ladies fashion">
+          <img src="https://images.unsplash.com/photo-1583391733956-6c78276477e7?auto=format&fit=crop&w=650&q=80" alt="Ladies fashion">
           <span class="category-overlay">
             <small>01 — WOMEN</small>
             <strong>Ladies Wear</strong>
@@ -220,7 +257,7 @@
         </button>
 
         <button class="category-card cat-footwear" data-category="Footwear">
-          <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=650&q=80" alt="Footwear">
+          <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=650&q=80" alt="Footwear">
           <span class="category-overlay">
             <small>05 — FINISHING TOUCH</small>
             <strong>Footwear</strong>
@@ -229,7 +266,7 @@
         </button>
 
         <button class="category-card cat-accessories" data-category="Accessories">
-          <img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?auto=format&fit=crop&w=650&q=80" alt="Fashion accessories">
+          <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=650&q=80" alt="Fashion accessories">
           <span class="category-overlay">
             <small>06 — THE DETAILS</small>
             <strong>Accessories</strong>
@@ -260,7 +297,7 @@
       <div class="shop-toolbar">
         <label class="search-box">
           <span>⌕</span>
-          <input id="searchInput" type="search" placeholder="Search outfits, styles, products...">
+          <input id="searchInput" type="search" placeholder="Search outfits, sarees, shirts, sneakers...">
         </label>
 
         <div class="toolbar-filters">
@@ -297,7 +334,7 @@
       <div>
         <span class="eyebrow">SELLER / SHOPKEEPER DASHBOARD</span>
         <h2>Manage your catalog<br><em>& showcase new styles.</em></h2>
-        <p id="shopkeeperBannerSubtitle">Add brand new products directly into StyleSpectrum MongoDB store.</p>
+        <p id="shopkeeperBannerSubtitle">Upload photos, set prices, and save directly into StyleSpectrum database.</p>
       </div>
       <button class="primary-btn" id="openProductForm">＋ Add a Product</button>
     </section>
@@ -334,7 +371,7 @@
     <div class="drawer-items" id="cartItems"></div>
     <div class="drawer-footer">
       <div class="total-row"><span>Subtotal</span><strong id="cartTotal">₹0</strong></div>
-      <p class="muted">Free shipping on orders above ₹999. Fast delivery across India.</p>
+      <p class="muted">Free shipping on all prepaid & COD orders across India.</p>
       <button class="primary-btn full-btn" id="checkoutBtn">Continue to Checkout ↗</button>
     </div>
   </aside>
@@ -345,14 +382,12 @@
       <div class="modal-header">
         <div>
           <span class="eyebrow">SECURE CHECKOUT</span>
-          <h2 id="checkoutTitle">Shipping & Payment</h2>
+          <h2 id="checkoutTitle">Delivery & Payment</h2>
         </div>
         <button class="close-btn" id="closeCheckout" aria-label="Close checkout">×</button>
       </div>
 
-      <div class="checkout-summary" id="checkoutSummary">
-        <!-- Injected via script.js -->
-      </div>
+      <div class="checkout-summary" id="checkoutSummary"></div>
 
       <form id="checkoutForm">
         <label>Full Delivery Name *
@@ -374,7 +409,7 @@
             <input name="city" id="checkCity" required placeholder="e.g. Jaipur, Delhi, Mumbai">
           </label>
           <label>State
-            <input name="state" id="checkState" placeholder="e.g. Rajasthan, Maharashtra" value="India">
+            <input name="state" id="checkState" placeholder="e.g. Rajasthan, Maharashtra" value="Rajasthan">
           </label>
         </div>
         <label>Payment Method
@@ -407,7 +442,24 @@
     </section>
   </div>
 
-  <!-- PRODUCT ADD MODAL (Only for Shopkeeper) -->
+  <!-- SHOPKEEPER CUSTOMER ORDERS DASHBOARD (For Shopkeepers) -->
+  <div class="modal-backdrop" id="shopOrdersModal" hidden>
+    <section class="modal" role="dialog" aria-modal="true" style="max-width: 760px;">
+      <div class="modal-header">
+        <div>
+          <span class="eyebrow">SELLER / SHOPKEEPER DASHBOARD</span>
+          <h2>Customer Orders Received</h2>
+        </div>
+        <button class="close-btn" id="closeShopOrdersModal" aria-label="Close orders">×</button>
+      </div>
+      <p class="muted" style="margin-top: 0;">View customer purchases, delivery addresses, and update fulfillment status.</p>
+      <div class="orders-list" id="shopOrdersListContainer" style="max-height: 480px; overflow-y: auto; padding: 4px;">
+        <p class="muted">Loading customer orders...</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- PRODUCT ADD MODAL (With Photo Upload & Live Preview) -->
   <div class="modal-backdrop" id="productModal" hidden>
     <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modal-header">
@@ -418,7 +470,7 @@
         <button class="close-btn" id="closeProductForm" aria-label="Close form">×</button>
       </div>
 
-      <p class="muted" style="margin-top: 0;">This product will be saved into MongoDB (stylespectrum_shopkeeper) and become available to all customers.</p>
+      <p class="muted" style="margin-top: 0;">Upload product images from your device or paste a URL. Saved directly in MongoDB (stylespectrum_shopkeeper).</p>
 
       <form id="productForm">
         <label>Product name *
@@ -447,9 +499,20 @@
             <input name="stock" id="prodStock" type="number" min="0" step="1" value="15" required>
           </label>
         </div>
-        <label>Image URL
-          <input name="image" id="prodImage" type="url" placeholder="https://images.unsplash.com/... or image link">
+
+        <!-- PHOTO UPLOAD & PREVIEW SECTION -->
+        <label>Upload Product Photo (From PC / Mobile)
+          <input type="file" id="prodImageFile" accept="image/*">
         </label>
+        <label>Or Paste Image URL
+          <input name="image" id="prodImage" type="url" placeholder="https://images.unsplash.com/... or image web link">
+        </label>
+
+        <div id="imagePreviewContainer" style="display: none; margin: 10px 0; text-align: center;">
+          <p style="font-size: 11px; color: #666; margin: 0 0 4px;">Photo Preview:</p>
+          <img id="imagePreview" alt="Product preview" style="max-height: 160px; max-width: 100%; border-radius: 8px; object-fit: cover; border: 1px solid #ddd; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+        </div>
+
         <label>Description *
           <textarea name="description" id="prodDesc" maxlength="400" rows="3" required placeholder="Describe fabrics, styling tips, fit..."></textarea>
         </label>
@@ -460,7 +523,7 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
  
-  <!-- Authentication Guard checking localStorage or sessionStorage -->
+  <!-- Authentication Guard -->
   <script>
     const authToken = localStorage.getItem("stylespectrum_token") || sessionStorage.getItem("stylespectrum_token");
     if (!authToken) {

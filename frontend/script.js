@@ -19,7 +19,6 @@ if (!currentToken || !currentUser) {
 
 const isShopkeeper = currentUser?.role === "shopkeeper";
 
-// Base API URL resolver (works on local port 5000, different dev ports, or Render)
 function getApiUrl(endpoint) {
   if (window.location.origin.includes("localhost") || window.location.origin.includes("127.0.0.1")) {
     return window.location.port === "5000" ? endpoint : `http://localhost:5000${endpoint}`;
@@ -38,6 +37,7 @@ const profileMenu = $("#profileMenu");
 const logoutBtn = $("#logoutBtn");
 
 const headerAddProductBtn = $("#headerAddProductBtn");
+const shopOrdersBtn = $("#shopOrdersBtn");
 const shopkeeperBanner = $("#shopkeeperBanner");
 const myOrdersBtn = $("#myOrdersBtn");
 
@@ -46,16 +46,18 @@ if (currentUser) {
   profileEmail.textContent = currentUser.email || "";
 
   if (isShopkeeper) {
-    // SHOPKEEPER VIEW
+    // SHOPKEEPER VIEW: Show seller controls & orders received
     profileRoleBadge.innerHTML = `<span class="role-badge badge-shopkeeper">🏪 Shopkeeper (${escapeHTML(currentUser.shopName || "Seller")})</span>`;
-    headerAddProductBtn.style.display = "inline-block";
-    shopkeeperBanner.style.display = "flex";
+    if (headerAddProductBtn) headerAddProductBtn.style.display = "inline-block";
+    if (shopOrdersBtn) shopOrdersBtn.style.display = "inline-block";
+    if (shopkeeperBanner) shopkeeperBanner.style.display = "flex";
     if (myOrdersBtn) myOrdersBtn.style.display = "none";
   } else {
-    // CUSTOMER VIEW: STRICTLY HIDE "Add a Product" features
+    // CUSTOMER VIEW: STRICTLY HIDE "Add Product" and Shopkeeper controls!
     profileRoleBadge.innerHTML = `<span class="role-badge badge-customer">🛒 Customer</span>`;
-    headerAddProductBtn.style.display = "none";
-    shopkeeperBanner.style.display = "none"; // GUARANTEED HIDDEN for customers!
+    if (headerAddProductBtn) headerAddProductBtn.style.display = "none";
+    if (shopOrdersBtn) shopOrdersBtn.style.display = "none";
+    if (shopkeeperBanner) shopkeeperBanner.style.display = "none"; // GUARANTEED HIDDEN!
     if (myOrdersBtn) myOrdersBtn.style.display = "inline-block";
   }
 }
@@ -73,12 +75,12 @@ logoutBtn.addEventListener("click", () => {
 });
 
 // --------------------------------------------------------------------------
-// 3. Local Storage Helpers & Starter Fallback
+// 3. Local Storage Helpers & State
 // --------------------------------------------------------------------------
 const STORAGE = {
-  cart: "stylespectrum_cart_v2",
-  wishlist: "stylespectrum_wishlist_v2",
-  productsBackup: "stylespectrum_products_cache"
+  cart: "stylespectrum_cart_v3",
+  wishlist: "stylespectrum_wishlist_v3",
+  productsBackup: "stylespectrum_products_cache_v3"
 };
 
 const categories = [
@@ -100,7 +102,6 @@ function saveStorage(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
     return true;
   } catch {
-    showToast("Browser storage full or unavailable.");
     return false;
   }
 }
@@ -115,7 +116,6 @@ let sortMode = "featured";
 let wishlistMode = false;
 let toastTimer;
 
-// Filter invalid cart/wishlist items
 cart = Array.isArray(cart) ? cart.filter(item => item && item.id && item.qty > 0) : [];
 wishlist = Array.isArray(wishlist) ? wishlist.filter(id => typeof id === "string") : [];
 
@@ -149,7 +149,7 @@ function showToast(message) {
 }
 
 // --------------------------------------------------------------------------
-// 4. Fetch Products from Live MongoDB API
+// 4. Fetch Products from MongoDB
 // --------------------------------------------------------------------------
 async function fetchProductsFromBackend() {
   try {
@@ -157,33 +157,32 @@ async function fetchProductsFromBackend() {
     const data = await res.json();
 
     if (data.success && Array.isArray(data.products) && data.products.length > 0) {
-      // Map MongoDB _id to id for seamless UI rendering
       products = data.products.map(p => ({
         ...p,
         id: p._id || p.id,
-        image: (p.images && p.images[0]) || p.image || "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=700&q=80"
+        image: (p.images && p.images[0]) || p.image || "https://images.unsplash.com/photo-1583391733956-6c78276477e7?auto=format&fit=crop&w=800&q=80"
       }));
       saveStorage(STORAGE.productsBackup, products);
     }
   } catch (err) {
-    console.warn("Using offline / cached products:", err.message);
+    console.warn("Using cached products:", err.message);
   }
 
   renderProducts();
 }
 
 function getImage(product) {
-  if (product.image && (product.image.startsWith("http://") || product.image.startsWith("https://"))) {
+  if (product.image && (product.image.startsWith("http://") || product.image.startsWith("https://") || product.image.startsWith("data:image/"))) {
     return product.image;
   }
   if (Array.isArray(product.images) && product.images[0]) {
     return product.images[0];
   }
-  return "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=700&q=80";
+  return "https://images.unsplash.com/photo-1583391733956-6c78276477e7?auto=format&fit=crop&w=800&q=80";
 }
 
 // --------------------------------------------------------------------------
-// 5. Product Filtering & Rendering
+// 5. Product Rendering & Filters
 // --------------------------------------------------------------------------
 function getFilteredProducts() {
   let list = products.filter(product => {
@@ -195,7 +194,8 @@ function getFilteredProducts() {
       product.category,
       product.description,
       product.brand,
-      product.tag
+      product.tag,
+      product.shopName
     ].join(" ").toLowerCase();
 
     const matchesSearch = searchable.includes(searchTerm);
@@ -222,7 +222,7 @@ function renderProducts() {
   $("#emptyState").hidden = list.length > 0;
   grid.hidden = list.length === 0;
 
-  $("#resultCount").textContent = `${list.length} piece${list.length === 1 ? "" : "s"} found`;
+  $("#resultCount").textContent = `${list.length} item${list.length === 1 ? "" : "s"} found`;
 
   $("#shopTitle").innerHTML = wishlistMode
     ? "Your <em>wishlist.</em>"
@@ -243,7 +243,7 @@ function renderProducts() {
             src="${escapeHTML(getImage(product))}"
             alt="${escapeHTML(product.name)}"
             loading="lazy"
-            onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=700&q=80'"
+            onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1583391733956-6c78276477e7?auto=format&fit=crop&w=800&q=80'"
           >
           ${product.tag ? `<span class="product-tag">${escapeHTML(product.tag)}</span>` : ""}
           <button
@@ -414,7 +414,7 @@ function closeCart() {
 }
 
 // --------------------------------------------------------------------------
-// 8. Real Checkout Flow (Stores Orders in stylespectrum_customer MongoDB)
+// 8. Checkout Flow (Stores in stylespectrum_customer MongoDB)
 // --------------------------------------------------------------------------
 const checkoutModal = $("#checkoutModal");
 const checkoutForm = $("#checkoutForm");
@@ -435,13 +435,11 @@ function openCheckout() {
   const total = cart.reduce((sum, item) => sum + (Number(item.price) || 0) * item.qty, 0);
   checkoutTotalBtn.textContent = money(total);
 
-  // Pre-fill user details if available
   if (currentUser) {
     $("#checkFullName").value = currentUser.name || "";
     $("#checkMobile").value = currentUser.mobile || "";
   }
 
-  // Render summary
   checkoutSummary.innerHTML = `
     <strong>Bag Summary (${cart.reduce((s, i) => s + i.qty, 0)} items)</strong>
     <div style="margin-top: 8px;">
@@ -472,7 +470,7 @@ checkoutForm.addEventListener("submit", async (e) => {
 
   const placeBtn = $("#placeOrderBtn");
   placeBtn.disabled = true;
-  placeBtn.textContent = "Placing Order...";
+  placeBtn.textContent = "Placing Order into Database...";
 
   const total = cart.reduce((sum, item) => sum + (Number(item.price) || 0) * item.qty, 0);
 
@@ -514,7 +512,6 @@ checkoutForm.addEventListener("submit", async (e) => {
       throw new Error(data.message || "Failed to place order.");
     }
 
-    // Order successfully saved in MongoDB!
     cart = [];
     saveStorage(STORAGE.cart, cart);
     updateHeader();
@@ -523,7 +520,6 @@ checkoutForm.addEventListener("submit", async (e) => {
     closeCheckoutModal();
     showToast(`🎉 Order Placed! ID: ${data.order.orderId}`);
 
-    // Automatically show orders history
     setTimeout(openOrdersModal, 800);
 
   } catch (err) {
@@ -585,13 +581,17 @@ async function openOrdersModal() {
               <span class="order-id">${escapeHTML(order.orderId)}</span>
               <div style="font-size: 11px; color: #888;">${orderDate}</div>
             </div>
-            <span class="order-status">${escapeHTML(order.orderStatus || "Confirmed")}</span>
+            <span class="order-status status-${(order.orderStatus || "Confirmed").toLowerCase()}">${escapeHTML(order.orderStatus || "Confirmed")}</span>
           </div>
 
           <div style="margin: 8px 0;">
             ${(order.items || []).map(it => `
               <div class="order-item-mini">
-                <span>${escapeHTML(it.name)} × ${it.qty}</span>
+                <img src="${escapeHTML(it.image || getImage(it))}" alt="${escapeHTML(it.name)}">
+                <div style="flex: 1;">
+                  <strong>${escapeHTML(it.name)}</strong>
+                  <div style="font-size: 12px; color: #666;">Qty: ${it.qty} × ${money(it.price)}</div>
+                </div>
                 <strong>${money(it.price * it.qty)}</strong>
               </div>
             `).join("")}
@@ -622,12 +622,198 @@ closeOrdersModal.addEventListener("click", () => {
 });
 
 // --------------------------------------------------------------------------
-// 10. Shopkeeper Add Product Modal (Saves to stylespectrum_shopkeeper MongoDB)
+// 10. SHOPKEEPER DASHBOARD: Customer Orders Received Modal
+// --------------------------------------------------------------------------
+const shopOrdersModal = $("#shopOrdersModal");
+const closeShopOrdersModal = $("#closeShopOrdersModal");
+const shopOrdersListContainer = $("#shopOrdersListContainer");
+
+async function openShopOrdersModal() {
+  if (!isShopkeeper) {
+    showToast("Only shopkeepers can access customer orders.");
+    return;
+  }
+
+  shopOrdersModal.hidden = false;
+  document.body.classList.add("no-scroll");
+  shopOrdersListContainer.innerHTML = `<p class="muted">Loading customer orders from stylespectrum_customer database...</p>`;
+
+  try {
+    const res = await fetch(getApiUrl("/api/orders/shop/all-orders"), {
+      headers: {
+        Authorization: `Bearer ${currentToken}`
+      }
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      throw new Error(data.message || "Failed to load orders.");
+    }
+
+    if (!data.orders || data.orders.length === 0) {
+      shopOrdersListContainer.innerHTML = `
+        <div style="text-align: center; padding: 40px 10px;">
+          <p style="font-size: 17px; font-weight: 600;">No customer orders received yet.</p>
+          <p class="muted">When customers purchase your items, their complete order details and addresses will appear here.</p>
+        </div>
+      `;
+      return;
+    }
+
+    shopOrdersListContainer.innerHTML = data.orders.map(order => {
+      const orderDate = new Date(order.createdAt).toLocaleDateString("en-IN", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+      return `
+        <div class="order-card">
+          <div class="order-card-header">
+            <div>
+              <span class="order-id">${escapeHTML(order.orderId)}</span>
+              <div style="font-size: 11px; color: #777;">Placed on: ${orderDate}</div>
+            </div>
+            <div>
+              <label style="font-size: 11px; font-weight: 600; margin-right: 4px;">Status:</label>
+              <select class="status-select" data-order-id="${escapeHTML(order._id || order.orderId)}">
+                <option value="Confirmed" ${order.orderStatus === "Confirmed" ? "selected" : ""}>Confirmed</option>
+                <option value="Processing" ${order.orderStatus === "Processing" ? "selected" : ""}>Processing</option>
+                <option value="Shipped" ${order.orderStatus === "Shipped" ? "selected" : ""}>Shipped</option>
+                <option value="Delivered" ${order.orderStatus === "Delivered" ? "selected" : ""}>Delivered</option>
+                <option value="Cancelled" ${order.orderStatus === "Cancelled" ? "selected" : ""}>Cancelled</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Customer Contact & Address Box -->
+          <div class="order-customer-box">
+            <div>👤 <strong>Customer:</strong> ${escapeHTML(order.customerName)} | 📞 <strong>Phone:</strong> <a href="tel:${escapeHTML(order.customerMobile)}" style="color:#8c3b4a; font-weight:600;">${escapeHTML(order.customerMobile)}</a> | ✉️ ${escapeHTML(order.customerEmail)}</div>
+            <div style="margin-top: 4px;">📍 <strong>Delivery Address:</strong> ${escapeHTML(order.shippingAddress?.addressLine)}, ${escapeHTML(order.shippingAddress?.city)}, ${escapeHTML(order.shippingAddress?.state)} - <strong>${escapeHTML(order.shippingAddress?.pincode)}</strong></div>
+          </div>
+
+          <!-- Items Ordered -->
+          <div style="margin: 10px 0;">
+            ${(order.items || []).map(it => `
+              <div class="order-item-mini">
+                <img src="${escapeHTML(it.image || getImage(it))}" alt="${escapeHTML(it.name)}">
+                <div style="flex: 1;">
+                  <strong>${escapeHTML(it.name)}</strong>
+                  <div style="font-size: 11px; color: #666;">Store: ${escapeHTML(it.shopName || "StyleSpectrum")}</div>
+                  <div style="font-size: 12px; color: #444;">Quantity: ${it.qty} × ${money(it.price)}</div>
+                </div>
+                <strong style="color: #211713;">${money(it.price * it.qty)}</strong>
+              </div>
+            `).join("")}
+          </div>
+
+          <div style="border-top: 1px solid #ebdcd2; padding-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 12px;">Payment: <strong>${escapeHTML(order.paymentMethod)}</strong> (${escapeHTML(order.paymentStatus)})</span>
+            <span style="font-size: 14px;">Total Order Value: <strong style="color: #8c3b4a; font-size: 16px;">${money(order.totalAmount)}</strong></span>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    // Add status change listeners
+    shopOrdersListContainer.querySelectorAll(".status-select").forEach(select => {
+      select.addEventListener("change", async (e) => {
+        const orderId = e.target.dataset.orderId;
+        const newStatus = e.target.value;
+
+        try {
+          const res = await fetch(getApiUrl(`/api/orders/status/${orderId}`), {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${currentToken}`
+            },
+            body: JSON.stringify({ status: newStatus })
+          });
+
+          const data = await res.json();
+          if (data.success) {
+            showToast(`Order status updated to ${newStatus}`);
+          } else {
+            showToast(data.message || "Update failed");
+          }
+        } catch (err) {
+          showToast("Failed to update status");
+        }
+      });
+    });
+
+  } catch (err) {
+    shopOrdersListContainer.innerHTML = `<p style="color: red;">Failed to load customer orders: ${err.message}</p>`;
+  }
+}
+
+if (shopOrdersBtn) {
+  shopOrdersBtn.addEventListener("click", openShopOrdersModal);
+}
+closeShopOrdersModal.addEventListener("click", () => {
+  shopOrdersModal.hidden = true;
+  document.body.classList.remove("no-scroll");
+});
+
+// --------------------------------------------------------------------------
+// 11. Shopkeeper Add Product Modal (With Image Upload & Preview)
 // --------------------------------------------------------------------------
 const productModal = $("#productModal");
 const productForm = $("#productForm");
 const openProductFormBtn = $("#openProductForm");
 const closeProductFormBtn = $("#closeProductForm");
+
+const prodImageFile = $("#prodImageFile");
+const prodImage = $("#prodImage");
+const imagePreviewContainer = $("#imagePreviewContainer");
+const imagePreview = $("#imagePreview");
+
+let activeImagePayload = "";
+
+// Image file upload handler
+if (prodImageFile) {
+  prodImageFile.addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) {
+      imagePreviewContainer.style.display = "none";
+      activeImagePayload = "";
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      alert("Please select a valid image file.");
+      this.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      activeImagePayload = e.target.result;
+      imagePreview.src = activeImagePayload;
+      imagePreviewContainer.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// URL input listener
+if (prodImage) {
+  prodImage.addEventListener("input", function () {
+    const url = this.value.trim();
+    if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
+      activeImagePayload = url;
+      imagePreview.src = url;
+      imagePreviewContainer.style.display = "block";
+    } else if (!prodImageFile.files[0]) {
+      imagePreviewContainer.style.display = "none";
+      activeImagePayload = "";
+    }
+  });
+}
 
 function openProductModal() {
   if (!isShopkeeper) {
@@ -657,15 +843,16 @@ productForm.addEventListener("submit", async (e) => {
 
   const saveBtn = $("#saveProductBtn");
   saveBtn.disabled = true;
-  saveBtn.textContent = "Saving to MongoDB...";
+  saveBtn.textContent = "Saving to MongoDB Database...";
 
   const name = $("#prodName").value.trim();
   const price = Number($("#prodPrice").value);
   const originalPrice = Number($("#prodOrigPrice").value) || price;
   const category = $("#prodCategory").value;
-  const stock = Number($("#prodStock").value) || 10;
-  const image = $("#prodImage").value.trim();
+  const stock = Number($("#prodStock").value) || 15;
   const description = $("#prodDesc").value.trim();
+
+  const finalImage = activeImagePayload || $("#prodImage").value.trim() || "https://images.unsplash.com/photo-1583391733956-6c78276477e7?auto=format&fit=crop&w=800&q=80";
 
   const payload = {
     name,
@@ -673,7 +860,7 @@ productForm.addEventListener("submit", async (e) => {
     originalPrice,
     category,
     stock,
-    images: image ? [image] : [],
+    images: [finalImage],
     description,
     brand: currentUser?.shopName || "StyleSpectrum",
     tag: "NEW"
@@ -696,10 +883,11 @@ productForm.addEventListener("submit", async (e) => {
     }
 
     productForm.reset();
+    activeImagePayload = "";
+    imagePreviewContainer.style.display = "none";
     closeProductModal();
-    showToast("🎉 Product saved to live store!");
+    showToast("🎉 Product saved directly into MongoDB store!");
 
-    // Refresh products list
     await fetchProductsFromBackend();
     $("#shop").scrollIntoView({ behavior: "smooth" });
 
@@ -712,7 +900,7 @@ productForm.addEventListener("submit", async (e) => {
 });
 
 // --------------------------------------------------------------------------
-// 11. Event Listeners for Storefront Controls
+// 12. Category, Filter & Search Listeners
 // --------------------------------------------------------------------------
 document.querySelectorAll(".category-card").forEach(card => {
   card.addEventListener("click", () => {
@@ -791,7 +979,7 @@ $("#cartToggle").addEventListener("click", openCart);
 $("#closeCart").addEventListener("click", closeCart);
 $("#drawerBackdrop").addEventListener("click", closeCart);
 
-// Mobile navigation
+// Mobile menu
 $("#menuToggle").addEventListener("click", () => {
   $(".nav").classList.toggle("open");
 });
@@ -808,11 +996,11 @@ document.addEventListener("keydown", (event) => {
     closeProductModal();
     closeCheckoutModal();
     ordersModal.hidden = true;
+    shopOrdersModal.hidden = true;
     document.body.classList.remove("no-scroll");
   }
 });
 
-// Footer year
 $("#year").textContent = new Date().getFullYear();
 
 // Initialize Store

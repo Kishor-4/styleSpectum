@@ -1,15 +1,17 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const Order = require("../models/Order");
-const { protect } = require("../middleware/authMiddleware");
+const { protect, approvedShopkeeper } = require("../middleware/authMiddleware");
 const { isCustomerDbReady } = require("../config/db");
 
 const router = express.Router();
 
-// Fallback in-memory order history
+// In-memory fallback if needed
 const memoryOrders = [];
 
 // ==========================================
 // POST /api/orders
+// Customer places a new order -> Stored in stylespectrum_customer MongoDB
 // ==========================================
 router.post("/", protect, async (req, res) => {
   try {
@@ -44,7 +46,7 @@ router.post("/", protect, async (req, res) => {
     const finalAmount = totalAmount ? Number(totalAmount) : calculatedTotal;
     const uniqueOrderId = `ORD-${Date.now().toString(36).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
-    const orderData = {
+    const orderPayload = {
       orderId: uniqueOrderId,
       customer: req.user._id || req.user.id,
       customerName: req.user.name,
@@ -74,23 +76,20 @@ router.post("/", protect, async (req, res) => {
       createdAt: new Date()
     };
 
-    if (isCustomerDbReady()) {
-      const dbOrder = await Order.create(orderData);
-      memoryOrders.unshift(dbOrder.toObject());
-      return res.status(201).json({
-        success: true,
-        message: "Order placed successfully! Stored in customer database.",
-        order: dbOrder
-      });
-    }
+    let createdOrder = null;
 
-    // In-memory addition
-    memoryOrders.unshift(orderData);
+    if (isCustomerDbReady()) {
+      createdOrder = await Order.create(orderPayload);
+      console.log(`✅ Order ${uniqueOrderId} saved directly to MongoDB Atlas (stylespectrum_customer)`);
+    } else {
+      createdOrder = orderPayload;
+      memoryOrders.unshift(orderPayload);
+    }
 
     res.status(201).json({
       success: true,
-      message: "Order placed successfully! Thank you for shopping with StyleSpectrum.",
-      order: orderData
+      message: `Order placed successfully! ID: ${uniqueOrderId}`,
+      order: createdOrder
     });
   } catch (error) {
     console.error("Place order error:", error.message);
@@ -103,13 +102,17 @@ router.post("/", protect, async (req, res) => {
 
 // ==========================================
 // GET /api/orders/my-orders
+// Customer views their own orders
 // ==========================================
 router.get("/my-orders", protect, async (req, res) => {
   try {
-    const custId = String(req.user._id || req.user.id);
+    const custId = req.user._id || req.user.id;
 
     if (isCustomerDbReady()) {
-      const orders = await Order.find({ customer: req.user._id }).sort({ createdAt: -1 }).lean();
+      const orders = await Order.find({ customer: custId })
+        .sort({ createdAt: -1 })
+        .lean();
+
       return res.json({
         success: true,
         count: orders.length,
@@ -117,16 +120,115 @@ router.get("/my-orders", protect, async (req, res) => {
       });
     }
 
-    const userOrders = memoryOrders.filter(o => String(o.customer) === custId);
+    const userOrders = memoryOrders.filter(
+      (o) => String(o.customer) === String(custId)
+    );
+
     res.json({
       success: true,
       count: userOrders.length,
       orders: userOrders
     });
   } catch (error) {
+    console.error("Customer orders error:", error.message);
     res.status(500).json({
       success: false,
       message: "Failed to fetch orders: " + error.message
+    });
+  }
+});
+
+// ==========================================
+// GET /api/orders/shop/all-orders
+// SHOPKEEPER DASHBOARD: Shopkeeper views ALL customer orders received!
+// ==========================================
+router.get("/shop/all-orders", protect, approvedShopkeeper, async (req, res) => {
+  try {
+    if (isCustomerDbReady()) {
+      const orders = await Order.find({})
+        .sort({ createdAt: -1 })
+        .lean();
+
+      return res.json({
+        success: true,
+        count: orders.length,
+        orders
+      });
+    }
+
+    res.json({
+      success: true,
+      count: memoryOrders.length,
+      orders: memoryOrders
+    });
+  } catch (error) {
+    console.error("Shopkeeper get all orders error:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch customer orders: " + error.message
+    });
+  }
+});
+
+// ==========================================
+// PATCH /api/orders/status/:id
+// SHOPKEEPER: Updates order status (e.g. Confirmed -> Shipped -> Delivered)
+// ==========================================
+router.patch("/status/:id", protect, approvedShopkeeper, async (req, res) => {
+  try {
+    const { status } = req.body;
+    const validStatuses = ["Confirmed", "Processing", "Shipped", "Delivered", "Cancelled"];
+
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status value"
+      });
+    }
+
+    if (isCustomerDbReady()) {
+      const query = mongoose.isValidObjectId(req.params.id)
+        ? { $or: [{ _id: req.params.id }, { orderId: req.params.id }] }
+        : { orderId: req.params.id };
+
+      const order = await Order.findOneAndUpdate(
+        query,
+        { $set: { orderStatus: status } },
+        { new: true }
+      );
+
+      if (!order) {
+        return res.status(404).json({
+          success: false,
+          message: "Order not found"
+        });
+      }
+
+      return res.json({
+        success: true,
+        message: `Order status updated to ${status}`,
+        order
+      });
+    }
+
+    const memOrder = memoryOrders.find(
+      (o) => o.orderId === req.params.id || o._id === req.params.id
+    );
+
+    if (memOrder) {
+      memOrder.orderStatus = status;
+      return res.json({
+        success: true,
+        message: `Order status updated to ${status}`,
+        order: memOrder
+      });
+    }
+
+    res.status(404).json({ success: false, message: "Order not found" });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to update status: " + error.message
     });
   }
 });
