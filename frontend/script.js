@@ -100,9 +100,70 @@ function readStorage(key, fallback) {
   }
 }
 
+// Sync Customer Selections (Cart & Wishlist) directly to MongoDB Atlas
+async function syncCartWithDatabase() {
+  if (isShopkeeper || !currentToken) return;
+  try {
+    await fetch(getApiUrl("/api/auth/customer/cart"), {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${currentToken}`
+      },
+      body: JSON.stringify({ items: cart })
+    });
+  } catch (err) {
+    console.warn("DB Cart Sync:", err.message);
+  }
+}
+
+async function syncWishlistWithDatabase() {
+  if (isShopkeeper || !currentToken) return;
+  try {
+    await fetch(getApiUrl("/api/auth/customer/wishlist"), {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${currentToken}`
+      },
+      body: JSON.stringify({ wishlist })
+    });
+  } catch (err) {
+    console.warn("DB Wishlist Sync:", err.message);
+  }
+}
+
+async function loadCustomerSelectionsFromDatabase() {
+  if (isShopkeeper || !currentToken) return;
+  try {
+    const res = await fetch(getApiUrl("/api/auth/customer/cart"), {
+      headers: { Authorization: `Bearer ${currentToken}` }
+    });
+    const data = await res.json();
+    if (data.success) {
+      if (Array.isArray(data.cart) && data.cart.length > 0) {
+        cart = data.cart;
+        saveStorage(STORAGE.cart, cart);
+        updateHeader();
+        renderCart();
+      }
+      if (Array.isArray(data.wishlist) && data.wishlist.length > 0) {
+        wishlist = data.wishlist;
+        saveStorage(STORAGE.wishlist, wishlist);
+        updateHeader();
+        renderProducts();
+      }
+    }
+  } catch (err) {
+    console.warn("Could not load DB selections:", err.message);
+  }
+}
+
 function saveStorage(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
+    if (key === STORAGE.cart) syncCartWithDatabase();
+    if (key === STORAGE.wishlist) syncWishlistWithDatabase();
     return true;
   } catch {
     return false;
@@ -1094,3 +1155,4 @@ $("#year").textContent = new Date().getFullYear();
 updateHeader();
 renderCart();
 fetchProductsFromBackend();
+loadCustomerSelectionsFromDatabase();

@@ -81,6 +81,29 @@ router.post("/", protect, async (req, res) => {
     if (isCustomerDbReady()) {
       createdOrder = await Order.create(orderPayload);
       console.log(`✅ Order ${uniqueOrderId} saved directly to MongoDB Atlas (stylespectrum_customer)`);
+
+      // Clear customer's active cart in MongoDB database
+      try {
+        const Customer = require("../models/Customer");
+        await Customer.findByIdAndUpdate(req.user._id || req.user.id, { $set: { cart: [] } });
+      } catch (e) {
+        console.warn("Could not clear customer cart in DB:", e.message);
+      }
+
+      // Decrement product inventory in stylespectrum_shopkeeper database
+      try {
+        const Product = require("../models/Product");
+        for (const item of items) {
+          const pId = item.productId || item.id;
+          if (pId && mongoose.isValidObjectId(pId)) {
+            await Product.findByIdAndUpdate(pId, {
+              $inc: { stock: -Math.max(1, Number(item.qty) || 1) }
+            });
+          }
+        }
+      } catch (e) {
+        console.warn("Could not decrement product stock:", e.message);
+      }
     } else {
       createdOrder = orderPayload;
       memoryOrders.unshift(orderPayload);

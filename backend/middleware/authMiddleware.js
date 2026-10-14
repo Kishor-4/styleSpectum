@@ -1,5 +1,26 @@
 const jwt = require("jsonwebtoken");
-const { getUserById } = require("../routes/authRoutes");
+const Customer = require("../models/Customer");
+const Shopkeeper = require("../models/Shopkeeper");
+const { isCustomerDbReady, isShopkeeperDbReady } = require("../config/db");
+
+async function getUserById(id, role) {
+  if (role === "shopkeeper") {
+    if (isShopkeeperDbReady()) {
+      try {
+        const s = await Shopkeeper.findById(id);
+        if (s) return s;
+      } catch (e) {}
+    }
+  } else {
+    if (isCustomerDbReady()) {
+      try {
+        const c = await Customer.findById(id);
+        if (c) return c;
+      } catch (e) {}
+    }
+  }
+  return { _id: id, id, role: role || "customer", isActive: true };
+}
 
 async function protect(req, res, next) {
   try {
@@ -16,7 +37,6 @@ async function protect(req, res, next) {
     const secret = process.env.JWT_SECRET || "stylespectrum_fallback_secret_key_2026";
 
     const decoded = jwt.verify(token, secret);
-
     const user = await getUserById(decoded.id, decoded.role);
 
     if (!user || user.isActive === false) {
@@ -68,5 +88,6 @@ function customerOnly(req, res, next) {
 module.exports = {
   protect,
   approvedShopkeeper,
-  customerOnly
+  customerOnly,
+  getUserById
 };

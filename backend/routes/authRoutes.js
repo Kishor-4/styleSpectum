@@ -295,6 +295,10 @@ router.post("/login", async (req, res) => {
         });
       }
 
+      if (isShopkeeperDbReady()) {
+        await Shopkeeper.findByIdAndUpdate(s._id, { $set: { lastLogin: new Date() } });
+      }
+
       const token = createToken(s, "shopkeeper");
       return res.json({
         success: true,
@@ -339,6 +343,10 @@ router.post("/login", async (req, res) => {
         });
       }
 
+      if (isCustomerDbReady()) {
+        await Customer.findByIdAndUpdate(c._id, { $set: { lastLogin: new Date() } });
+      }
+
       const token = createToken(c, "customer");
       return res.json({
         success: true,
@@ -358,6 +366,7 @@ router.post("/login", async (req, res) => {
     if (isShopkeeperDbReady()) {
       const s = await Shopkeeper.findOne({ email: normalizedEmail }).select("+password");
       if (s && (await bcrypt.compare(password, s.password))) {
+        await Shopkeeper.findByIdAndUpdate(s._id, { $set: { lastLogin: new Date() } });
         const token = createToken(s, "shopkeeper");
         return res.json({
           success: true,
@@ -379,6 +388,7 @@ router.post("/login", async (req, res) => {
     if (isCustomerDbReady()) {
       const c = await Customer.findOne({ email: normalizedEmail }).select("+password");
       if (c && (await bcrypt.compare(password, c.password))) {
+        await Customer.findByIdAndUpdate(c._id, { $set: { lastLogin: new Date() } });
         const token = createToken(c, "customer");
         return res.json({
           success: true,
@@ -409,5 +419,54 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// ==========================================
+// CUSTOMER SELECTIONS (CART & WISHLIST) SYNC TO MONGODB
+// ==========================================
+const { protect } = require("../middleware/authMiddleware");
+
+// PUT /api/auth/customer/cart -> Save customer's selected products to MongoDB
+router.put("/customer/cart", protect, async (req, res) => {
+  try {
+    const { items } = req.body;
+    if (isCustomerDbReady()) {
+      await Customer.findByIdAndUpdate(req.user._id || req.user.id, {
+        $set: { cart: items || [] }
+      });
+      console.log(`🛒 Cart selections saved to MongoDB Atlas for ${req.user.name}: ${items ? items.length : 0} items`);
+    }
+    res.json({ success: true, message: "Cart synchronized with MongoDB Atlas" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// GET /api/auth/customer/cart -> Load customer's selected products from MongoDB
+router.get("/customer/cart", protect, async (req, res) => {
+  try {
+    if (isCustomerDbReady()) {
+      const c = await Customer.findById(req.user._id || req.user.id).select("cart wishlist");
+      return res.json({ success: true, cart: c?.cart || [], wishlist: c?.wishlist || [] });
+    }
+    res.json({ success: true, cart: [], wishlist: [] });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// PUT /api/auth/customer/wishlist -> Save wishlist to MongoDB
+router.put("/customer/wishlist", protect, async (req, res) => {
+  try {
+    const { wishlist } = req.body;
+    if (isCustomerDbReady()) {
+      await Customer.findByIdAndUpdate(req.user._id || req.user.id, {
+        $set: { wishlist: wishlist || [] }
+      });
+      console.log(`♥ Wishlist saved to MongoDB Atlas for ${req.user.name}`);
+    }
+    res.json({ success: true, message: "Wishlist synchronized with MongoDB Atlas" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 module.exports = router;
-module.exports.getUserById = getUserById;

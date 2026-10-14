@@ -44,6 +44,9 @@ const shopkeeperSchema = new mongoose.Schema(
       type: Boolean,
       default: true // Auto-approved for immediate access and product creation
     },
+    lastLogin: {
+      type: Date
+    },
     isActive: {
       type: Boolean,
       default: true
