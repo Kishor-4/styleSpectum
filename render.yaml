@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: stylespectrum
+    name: stylespectrum-store
     runtime: node
     plan: free
     region: singapore
