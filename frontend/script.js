@@ -14,7 +14,7 @@ const currentUser = JSON.parse(
 );
 
 if (!currentToken || !currentUser) {
-  window.location.replace("login.html");
+  window.location.replace("register.html");
 }
 
 const isShopkeeper = currentUser?.role === "shopkeeper";
@@ -74,7 +74,7 @@ logoutBtn.addEventListener("click", () => {
   localStorage.removeItem("stylespectrum_user");
   sessionStorage.removeItem("stylespectrum_token");
   sessionStorage.removeItem("stylespectrum_user");
-  window.location.replace("login.html");
+  window.location.replace("register.html");
 });
 
 // --------------------------------------------------------------------------

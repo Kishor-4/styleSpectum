@@ -78,18 +78,18 @@ registerForm.addEventListener("submit", async function (event) {
     }
 
     registerMessage.style.color = "green";
-    registerMessage.textContent =
-      data.message || "Account created successfully! Opening login...";
+    registerMessage.textContent = "✅ Account created successfully in database! Redirecting to Login...";
+
+    // Strict Flow: Do NOT auto-login. User must perform Step 2 (Login)!
+    localStorage.removeItem("stylespectrum_token");
+    localStorage.removeItem("stylespectrum_user");
+    sessionStorage.removeItem("stylespectrum_token");
+    sessionStorage.removeItem("stylespectrum_user");
 
     registerForm.reset();
 
-    if (data.token && data.user) {
-      localStorage.setItem("stylespectrum_token", data.token);
-      localStorage.setItem("stylespectrum_user", JSON.stringify(data.user));
-    }
-
     setTimeout(function () {
-      window.location.href = "login.html";
+      window.location.href = `login.html?registered=true&role=${encodeURIComponent(selectedRole)}&email=${encodeURIComponent(email)}`;
     }, 1200);
 
   } catch (error) {

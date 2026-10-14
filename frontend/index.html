@@ -6,12 +6,13 @@
   <meta name="theme-color" content="#211713">
   <title>StyleSpectrum | Your Style, Your Spectrum</title>
 
-  <!-- STRICT AUTHENTICATION GUARD AT TOP OF HEAD: Immediate redirect if not logged in -->
+  <!-- STRICT AUTHENTICATION GUARD: First Register -> Then Login -> Then Website -->
   <script>
     (function() {
       var token = localStorage.getItem("stylespectrum_token") || sessionStorage.getItem("stylespectrum_token");
-      if (!token) {
-        window.location.replace("login.html");
+      var user = localStorage.getItem("stylespectrum_user") || sessionStorage.getItem("stylespectrum_user");
+      if (!token || !user) {
+        window.location.replace("register.html");
       }
     })();
   </script>

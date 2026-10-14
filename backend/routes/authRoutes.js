@@ -257,7 +257,7 @@ router.post("/register", async (req, res) => {
 // ==========================================
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
@@ -268,7 +268,93 @@ router.post("/login", async (req, res) => {
 
     const normalizedEmail = email.trim().toLowerCase();
 
-    // 1. Check Shopkeeper DB
+    // 1. If role is explicitly 'shopkeeper'
+    if (role === "shopkeeper") {
+      let s = null;
+      if (isShopkeeperDbReady()) {
+        s = await Shopkeeper.findOne({ email: normalizedEmail }).select("+password");
+      }
+      if (!s) {
+        for (const val of memoryShopkeepers.values()) {
+          if (val.email === normalizedEmail) { s = val; break; }
+        }
+      }
+
+      if (!s) {
+        return res.status(401).json({
+          success: false,
+          message: "No shopkeeper account found with this email. If you are a customer, please select the 'Customer Login' tab."
+        });
+      }
+
+      const match = await bcrypt.compare(password, s.password);
+      if (!match) {
+        return res.status(401).json({
+          success: false,
+          message: "Incorrect password for shopkeeper account."
+        });
+      }
+
+      const token = createToken(s, "shopkeeper");
+      return res.json({
+        success: true,
+        message: "Shopkeeper login successful",
+        token,
+        user: {
+          id: s._id || s.id,
+          name: s.name,
+          email: s.email,
+          mobile: s.mobile,
+          role: "shopkeeper",
+          shopName: s.shopName,
+          shopkeeperApproved: true
+        }
+      });
+    }
+
+    // 2. If role is explicitly 'customer'
+    if (role === "customer") {
+      let c = null;
+      if (isCustomerDbReady()) {
+        c = await Customer.findOne({ email: normalizedEmail }).select("+password");
+      }
+      if (!c) {
+        for (const val of memoryCustomers.values()) {
+          if (val.email === normalizedEmail) { c = val; break; }
+        }
+      }
+
+      if (!c) {
+        return res.status(401).json({
+          success: false,
+          message: "No customer account found with this email. If you are a shopkeeper, please select the 'Shopkeeper Login' tab."
+        });
+      }
+
+      const match = await bcrypt.compare(password, c.password);
+      if (!match) {
+        return res.status(401).json({
+          success: false,
+          message: "Incorrect password for customer account."
+        });
+      }
+
+      const token = createToken(c, "customer");
+      return res.json({
+        success: true,
+        message: "Customer login successful",
+        token,
+        user: {
+          id: c._id || c.id,
+          name: c.name,
+          email: c.email,
+          mobile: c.mobile,
+          role: "customer"
+        }
+      });
+    }
+
+    // 3. Fallback if role was omitted
     if (isShopkeeperDbReady()) {
       const s = await Shopkeeper.findOne({ email: normalizedEmail }).select("+password");
       if (s && (await bcrypt.compare(password, s.password))) {
@@ -288,29 +374,8 @@ router.post("/login", async (req, res) => {
           }
         });
       }
-    } else {
-      for (const s of memoryShopkeepers.values()) {
-        if (s.email === normalizedEmail && (await bcrypt.compare(password, s.password))) {
-          const token = createToken(s, "shopkeeper");
-          return res.json({
-            success: true,
-            message: "Shopkeeper login successful",
-            token,
-            user: {
-              id: s.id,
-              name: s.name,
-              email: s.email,
-              mobile: s.mobile,
-              role: "shopkeeper",
-              shopName: s.shopName,
-              shopkeeperApproved: true
-            }
-          });
-        }
-      }
     }
 
-    // 2. Check Customer DB
     if (isCustomerDbReady()) {
       const c = await Customer.findOne({ email: normalizedEmail }).select("+password");
       if (c && (await bcrypt.compare(password, c.password))) {
@@ -327,24 +392,6 @@ router.post("/login", async (req, res) => {
             role: "customer"
           }
         });
-      }
-    } else {
-      for (const c of memoryCustomers.values()) {
-        if (c.email === normalizedEmail && (await bcrypt.compare(password, c.password))) {
-          const token = createToken(c, "customer");
-          return res.json({
-            success: true,
-            message: "Customer login successful",
-            token,
-            user: {
-              id: c.id,
-              name: c.name,
-              email: c.email,
-              mobile: c.mobile,
-              role: "customer"
-            }
-          });
-        }
       }
     }
 
