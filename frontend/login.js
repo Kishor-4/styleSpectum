@@ -1,6 +1,16 @@
 const loginForm = document.getElementById("loginForm");
 const loginMessage = document.getElementById("loginMessage");
 
+function getApiUrl(endpoint) {
+  if (window.location.protocol === "file:") {
+    return `http://localhost:5000${endpoint}`;
+  }
+  if (window.location.origin.includes("localhost") || window.location.origin.includes("127.0.0.1")) {
+    return window.location.port === "5000" ? endpoint : `http://localhost:5000${endpoint}`;
+  }
+  return endpoint;
+}
+
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -10,13 +20,8 @@ loginForm.addEventListener("submit", async (event) => {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
 
-  // Determine API base url (works both locally and on Render)
-  const apiUrl = window.location.origin.includes("localhost") || window.location.origin.includes("127.0.0.1")
-    ? (window.location.port === "5000" ? "/api/auth/login" : "http://localhost:5000/api/auth/login")
-    : "/api/auth/login";
-
   try {
-    const response = await fetch(apiUrl, {
+    const response = await fetch(getApiUrl("/api/auth/login"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -51,7 +56,7 @@ loginForm.addEventListener("submit", async (event) => {
     loginMessage.style.color = "red";
     loginMessage.textContent =
       error.message === "Failed to fetch"
-        ? "Unable to connect to the server. Please verify backend is running."
+        ? "Unable to connect to the server. Please verify backend is running on http://localhost:5000."
         : error.message || "Unable to sign in. Please try again.";
   }
 });

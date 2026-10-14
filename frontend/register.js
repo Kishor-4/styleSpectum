@@ -5,6 +5,16 @@ const shopNameInput = document.getElementById("shopName");
 const submitBtn = document.getElementById("submitBtn");
 const roleRadios = document.querySelectorAll('input[name="role"]');
 
+function getApiUrl(endpoint) {
+  if (window.location.protocol === "file:") {
+    return `http://localhost:5000${endpoint}`;
+  }
+  if (window.location.origin.includes("localhost") || window.location.origin.includes("127.0.0.1")) {
+    return window.location.port === "5000" ? endpoint : `http://localhost:5000${endpoint}`;
+  }
+  return endpoint;
+}
+
 // Toggle shopkeeper fields visibility
 roleRadios.forEach((radio) => {
   radio.addEventListener("change", (e) => {
@@ -32,7 +42,7 @@ registerForm.addEventListener("submit", async function (event) {
   const shopAddress = document.getElementById("shopAddress").value.trim();
 
   registerMessage.style.color = "#8c3b4a";
-  registerMessage.textContent = "Creating your account...";
+  registerMessage.textContent = "Creating your account in StyleSpectrum database...";
 
   const payload = {
     name,
@@ -52,13 +62,8 @@ registerForm.addEventListener("submit", async function (event) {
     payload.shopAddress = shopAddress;
   }
 
-  // Determine API base url (works both locally and when deployed)
-  const apiUrl = window.location.origin.includes("localhost") || window.location.origin.includes("127.0.0.1")
-    ? (window.location.port === "5000" ? "/api/auth/register" : "http://localhost:5000/api/auth/register")
-    : "/api/auth/register";
-
   try {
-    const response = await fetch(apiUrl, {
+    const response = await fetch(getApiUrl("/api/auth/register"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -78,7 +83,6 @@ registerForm.addEventListener("submit", async function (event) {
 
     registerForm.reset();
 
-    // Auto-save session if token provided
     if (data.token && data.user) {
       localStorage.setItem("stylespectrum_token", data.token);
       localStorage.setItem("stylespectrum_user", JSON.stringify(data.user));
@@ -92,7 +96,7 @@ registerForm.addEventListener("submit", async function (event) {
     registerMessage.style.color = "red";
     registerMessage.textContent =
       error.message === "Failed to fetch"
-        ? "Unable to connect to StyleSpectrum server. Please ensure the backend server is running."
+        ? "Unable to connect to StyleSpectrum server. Please ensure backend is running on port 5000."
         : error.message || "Something went wrong. Please try again.";
   }
 });

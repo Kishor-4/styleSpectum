@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#211713">
   <title>StyleSpectrum | Your Style, Your Spectrum</title>
+
+  <!-- STRICT AUTHENTICATION GUARD AT TOP OF HEAD: Immediate redirect if not logged in -->
+  <script>
+    (function() {
+      var token = localStorage.getItem("stylespectrum_token") || sessionStorage.getItem("stylespectrum_token");
+      if (!token) {
+        window.location.replace("login.html");
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -72,13 +83,25 @@
       background: #e1f5fe;
       color: #0277bd;
     }
+    .status-confirmed {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    .status-processing {
+      background: #e3f2fd;
+      color: #1565c0;
+    }
     .status-shipped {
       background: #fff3e0;
       color: #e65100;
     }
     .status-delivered {
       background: #e8f5e9;
-      color: #2e7d32;
+      color: #1b5e20;
+    }
+    .status-cancelled {
+      background: #ffebee;
+      color: #c62828;
     }
     .order-item-mini {
       display: flex;
@@ -221,7 +244,7 @@
 
       <div class="category-grid">
         <button class="category-card cat-ladies" data-category="Ladies Wear">
-          <img src="https://images.unsplash.com/photo-1583391733956-6c78276477e7?auto=format&fit=crop&w=650&q=80" alt="Ladies fashion">
+          <img src="https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=650&q=80" alt="Ladies fashion">
           <span class="category-overlay">
             <small>01 — WOMEN</small>
             <strong>Ladies Wear</strong>
@@ -230,7 +253,7 @@
         </button>
 
         <button class="category-card cat-sarees" data-category="Sarees">
-          <img src="https://images.unsplash.com/photo-1610030469668-8e9f641aaf24?auto=format&fit=crop&w=650&q=80" alt="Saree collection">
+          <img src="https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=650&q=80" alt="Saree collection">
           <span class="category-overlay">
             <small>02 — ETHNIC</small>
             <strong>Sarees</strong>
@@ -297,7 +320,7 @@
       <div class="shop-toolbar">
         <label class="search-box">
           <span>⌕</span>
-          <input id="searchInput" type="search" placeholder="Search outfits, sarees, shirts, sneakers...">
+          <input id="searchInput" type="search" placeholder="Search kurtis, sarees, shirts, blazers, sneakers...">
         </label>
 
         <div class="toolbar-filters">
@@ -334,7 +357,7 @@
       <div>
         <span class="eyebrow">SELLER / SHOPKEEPER DASHBOARD</span>
         <h2>Manage your catalog<br><em>& showcase new styles.</em></h2>
-        <p id="shopkeeperBannerSubtitle">Upload photos, set prices, and save directly into StyleSpectrum database.</p>
+        <p id="shopkeeperBannerSubtitle">Upload photos from device, set prices, and save directly into StyleSpectrum database.</p>
       </div>
       <button class="primary-btn" id="openProductForm">＋ Add a Product</button>
     </section>
@@ -426,6 +449,46 @@
     </section>
   </div>
 
+  <!-- ORDER SUCCESS / CONFIRMED MODAL (Real E-Commerce Confirmation Screen) -->
+  <div class="modal-backdrop" id="orderSuccessModal" hidden>
+    <section class="modal" role="dialog" aria-modal="true" style="max-width: 500px; text-align: center; padding: 32px 24px;">
+      <div style="width: 68px; height: 68px; background: #e8f5e9; color: #2e7d32; border-radius: 50%; display: grid; place-items: center; font-size: 34px; margin: 0 auto 14px;">
+        ✓
+      </div>
+      <span class="eyebrow" style="color: #2e7d32; font-weight: 700; letter-spacing: 1px;">ORDER PLACED & CONFIRMED</span>
+      <h2 style="margin: 8px 0 6px; font-size: 24px;">Thank You for Shopping!</h2>
+      <p style="color: #666; font-size: 13px; margin: 0 0 16px;">We have received your order and saved it in StyleSpectrum database.</p>
+
+      <div style="background: #faf7f2; border: 1px dashed #d9c8bd; border-radius: 10px; padding: 14px; margin-bottom: 20px; text-align: left;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+          <span style="font-size: 13px; color: #666;">Order Tracking ID:</span>
+          <strong style="color: #8c3b4a;" id="successOrderId">ORD-XXXX</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+          <span style="font-size: 13px; color: #666;">Status:</span>
+          <span class="order-status status-confirmed">Confirmed</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+          <span style="font-size: 13px; color: #666;">Estimated Delivery:</span>
+          <strong id="successDeliveryDate">Within 3-4 Business Days</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-top: 1px solid #ebdcd2; padding-top: 8px; margin-top: 8px;">
+          <span style="font-size: 14px; font-weight: 600;">Total Amount:</span>
+          <strong style="font-size: 16px; color: #8c3b4a;" id="successTotalAmount">₹0</strong>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <button class="outline-btn" id="successViewOrdersBtn" type="button" style="padding: 12px; font-size: 13px;">
+          📦 View in My Orders
+        </button>
+        <button class="primary-btn" id="successContinueBtn" type="button" style="padding: 12px; font-size: 13px;">
+          Continue Shopping 🛍️
+        </button>
+      </div>
+    </section>
+  </div>
+
   <!-- MY ORDERS MODAL (For Customers) -->
   <div class="modal-backdrop" id="ordersModal" hidden>
     <section class="modal" role="dialog" aria-modal="true" style="max-width: 600px;">
@@ -452,7 +515,7 @@
         </div>
         <button class="close-btn" id="closeShopOrdersModal" aria-label="Close orders">×</button>
       </div>
-      <p class="muted" style="margin-top: 0;">View customer purchases, delivery addresses, and update fulfillment status.</p>
+      <p class="muted" style="margin-top: 0;">View customer purchases, delivery addresses, and update fulfillment status in real time.</p>
       <div class="orders-list" id="shopOrdersListContainer" style="max-height: 480px; overflow-y: auto; padding: 4px;">
         <p class="muted">Loading customer orders...</p>
       </div>
@@ -470,7 +533,7 @@
         <button class="close-btn" id="closeProductForm" aria-label="Close form">×</button>
       </div>
 
-      <p class="muted" style="margin-top: 0;">Upload product images from your device or paste a URL. Saved directly in MongoDB (stylespectrum_shopkeeper).</p>
+      <p class="muted" style="margin-top: 0;">Upload product images from your device or paste a URL. Saved permanently in MongoDB (stylespectrum_shopkeeper).</p>
 
       <form id="productForm">
         <label>Product name *
@@ -516,20 +579,12 @@
         <label>Description *
           <textarea name="description" id="prodDesc" maxlength="400" rows="3" required placeholder="Describe fabrics, styling tips, fit..."></textarea>
         </label>
-        <button type="submit" class="primary-btn full-btn" id="saveProductBtn">Save to Live Store ↗</button>
+        <button type="submit" class="primary-btn full-btn" id="saveProductBtn">Save Permanently to Store ↗</button>
       </form>
     </section>
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
- 
-  <!-- Authentication Guard -->
-  <script>
-    const authToken = localStorage.getItem("stylespectrum_token") || sessionStorage.getItem("stylespectrum_token");
-    if (!authToken) {
-      window.location.replace("login.html");
-    }
-  </script>
 
   <script src="script.js"></script>
 </body>

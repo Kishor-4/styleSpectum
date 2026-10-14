@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login | StyleSpectrum</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     .auth-page {
       min-height: 100vh;
@@ -18,26 +20,63 @@
     .auth-card {
       width: 100%;
       max-width: 460px;
-      padding: 32px;
+      padding: 36px 32px;
       background: white;
       border-radius: 16px;
       box-shadow: 0 8px 32px rgba(0,0,0,.08);
     }
 
+    .auth-brand {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .auth-brand-icon {
+      display: inline-grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      background: #8c3b4a;
+      color: white;
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 28px;
+      border-radius: 10px;
+      margin: 0 auto;
+    }
+
+    .auth-brand h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 8px 0 2px;
+      color: #211713;
+    }
+
+    .auth-brand small {
+      color: #888;
+      letter-spacing: 2px;
+      font-size: 9px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
     .auth-card h1 {
-      margin: 12px 0;
-      font-size: 30px;
+      margin: 12px 0 6px;
+      font-size: 24px;
+      text-align: center;
     }
 
     .auth-card p {
       color: #666;
-      line-height: 1.6;
+      line-height: 1.5;
+      text-align: center;
+      margin-top: 0;
     }
 
     .auth-card label {
       display: block;
       margin: 16px 0 7px;
       font-weight: 600;
+      font-size: 14px;
     }
 
     .auth-card input {
@@ -46,6 +85,12 @@
       border: 1px solid #ddd;
       border-radius: 8px;
       font: inherit;
+      box-sizing: border-box;
+    }
+
+    .auth-card input:focus {
+      border-color: #8c3b4a;
+      outline: none;
     }
 
     .auth-submit {
@@ -57,34 +102,48 @@
       background: #8c3b4a;
       color: white;
       font-size: 16px;
+      font-weight: 600;
       cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .auth-submit:hover {
+      background: #732f3c;
     }
 
     .auth-message {
+      margin-top: 14px;
       overflow-wrap: anywhere;
+      text-align: center;
+      font-size: 14px;
     }
 
     .auth-footer {
-      margin-top: 20px;
+      margin-top: 22px;
       text-align: center;
+      font-size: 14px;
+      color: #666;
     }
 
-    .auth-footer a,
-    .auth-back {
+    .auth-footer a {
       color: #8c3b4a;
       font-weight: 600;
+      text-decoration: none;
+      margin-left: 4px;
     }
   </style>
 </head>
 <body>
   <main class="auth-page">
     <section class="auth-card">
-      <a class="auth-back" href="index.html">
-        ← Back to StyleSpectrum
-      </a>
+      <div class="auth-brand">
+        <div class="auth-brand-icon">S</div>
+        <h2>Style<span style="font-weight: 400;">Spectrum</span></h2>
+        <small>Fashion for every you</small>
+      </div>
 
-      <h1>Welcome Back!</h1>
-      <p>Login to continue shopping or managing your store.</p>
+      <h1>Welcome Back</h1>
+      <p>Sign in to access your store or shopping account.</p>
 
       <form id="loginForm">
         <label for="email">Email Address</label>
@@ -108,7 +167,7 @@
         >
 
         <button class="auth-submit" type="submit">
-          Login
+          Secure Login ↗
         </button>
 
         <p id="loginMessage" class="auth-message"
@@ -116,7 +175,7 @@
       </form>
 
       <div class="auth-footer">
-        New to StyleSpectrum?
+        Don't have an account?
         <a href="register.html">Create an account</a>
       </div>
     </section>

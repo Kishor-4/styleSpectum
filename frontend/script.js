@@ -20,6 +20,9 @@ if (!currentToken || !currentUser) {
 const isShopkeeper = currentUser?.role === "shopkeeper";
 
 function getApiUrl(endpoint) {
+  if (window.location.protocol === "file:") {
+    return `http://localhost:5000${endpoint}`;
+  }
   if (window.location.origin.includes("localhost") || window.location.origin.includes("127.0.0.1")) {
     return window.location.port === "5000" ? endpoint : `http://localhost:5000${endpoint}`;
   }
@@ -78,9 +81,9 @@ logoutBtn.addEventListener("click", () => {
 // 3. Local Storage Helpers & State
 // --------------------------------------------------------------------------
 const STORAGE = {
-  cart: "stylespectrum_cart_v3",
-  wishlist: "stylespectrum_wishlist_v3",
-  productsBackup: "stylespectrum_products_cache_v3"
+  cart: "stylespectrum_cart_v4",
+  wishlist: "stylespectrum_wishlist_v4",
+  productsBackup: "stylespectrum_products_cache_v4"
 };
 
 const categories = [
@@ -149,7 +152,7 @@ function showToast(message) {
 }
 
 // --------------------------------------------------------------------------
-// 4. Fetch Products from MongoDB
+// 4. Fetch Products from MongoDB Atlas
 // --------------------------------------------------------------------------
 async function fetchProductsFromBackend() {
   try {
@@ -160,7 +163,7 @@ async function fetchProductsFromBackend() {
       products = data.products.map(p => ({
         ...p,
         id: p._id || p.id,
-        image: (p.images && p.images[0]) || p.image || "https://images.unsplash.com/photo-1583391733956-6c78276477e7?auto=format&fit=crop&w=800&q=80"
+        image: (p.images && p.images[0]) || p.image || "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=80"
       }));
       saveStorage(STORAGE.productsBackup, products);
     }
@@ -178,7 +181,7 @@ function getImage(product) {
   if (Array.isArray(product.images) && product.images[0]) {
     return product.images[0];
   }
-  return "https://images.unsplash.com/photo-1583391733956-6c78276477e7?auto=format&fit=crop&w=800&q=80";
+  return "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=80";
 }
 
 // --------------------------------------------------------------------------
@@ -243,7 +246,7 @@ function renderProducts() {
             src="${escapeHTML(getImage(product))}"
             alt="${escapeHTML(product.name)}"
             loading="lazy"
-            onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1583391733956-6c78276477e7?auto=format&fit=crop&w=800&q=80'"
+            onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=80'"
           >
           ${product.tag ? `<span class="product-tag">${escapeHTML(product.tag)}</span>` : ""}
           <button
@@ -414,13 +417,19 @@ function closeCart() {
 }
 
 // --------------------------------------------------------------------------
-// 8. Checkout Flow (Stores in stylespectrum_customer MongoDB)
+// 8. Checkout & Order Confirmed Experience
 // --------------------------------------------------------------------------
 const checkoutModal = $("#checkoutModal");
 const checkoutForm = $("#checkoutForm");
 const checkoutSummary = $("#checkoutSummary");
 const checkoutTotalBtn = $("#checkoutTotalBtn");
 const closeCheckout = $("#closeCheckout");
+
+const orderSuccessModal = $("#orderSuccessModal");
+const successOrderId = $("#successOrderId");
+const successTotalAmount = $("#successTotalAmount");
+const successViewOrdersBtn = $("#successViewOrdersBtn");
+const successContinueBtn = $("#successContinueBtn");
 
 function openCheckout() {
   if (cart.length === 0) {
@@ -465,12 +474,13 @@ function closeCheckoutModal() {
 $("#checkoutBtn").addEventListener("click", openCheckout);
 closeCheckout.addEventListener("click", closeCheckoutModal);
 
+// Handle Successful Order
 checkoutForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const placeBtn = $("#placeOrderBtn");
   placeBtn.disabled = true;
-  placeBtn.textContent = "Placing Order into Database...";
+  placeBtn.textContent = "Placing Order into MongoDB...";
 
   const total = cart.reduce((sum, item) => sum + (Number(item.price) || 0) * item.qty, 0);
 
@@ -512,15 +522,19 @@ checkoutForm.addEventListener("submit", async (e) => {
       throw new Error(data.message || "Failed to place order.");
     }
 
+    // Clear cart permanently
     cart = [];
     saveStorage(STORAGE.cart, cart);
     updateHeader();
     renderCart();
 
     closeCheckoutModal();
-    showToast(`🎉 Order Placed! ID: ${data.order.orderId}`);
 
-    setTimeout(openOrdersModal, 800);
+    // Show Professional Order Confirmed Modal
+    successOrderId.textContent = data.order.orderId;
+    successTotalAmount.textContent = money(total);
+    orderSuccessModal.hidden = false;
+    document.body.classList.add("no-scroll");
 
   } catch (err) {
     showToast(err.message || "Could not place order.");
@@ -530,8 +544,20 @@ checkoutForm.addEventListener("submit", async (e) => {
   }
 });
 
+// Order Confirmation Modal Actions
+successViewOrdersBtn.addEventListener("click", () => {
+  orderSuccessModal.hidden = true;
+  openOrdersModal();
+});
+
+successContinueBtn.addEventListener("click", () => {
+  orderSuccessModal.hidden = true;
+  document.body.classList.remove("no-scroll");
+  $("#shop").scrollIntoView({ behavior: "smooth" });
+});
+
 // --------------------------------------------------------------------------
-// 9. Customer Order History Modal
+// 9. Customer Order History Modal (Shows Real 'Confirmed' Status)
 // --------------------------------------------------------------------------
 const ordersModal = $("#ordersModal");
 const closeOrdersModal = $("#closeOrdersModal");
@@ -574,6 +600,8 @@ async function openOrdersModal() {
         minute: "2-digit"
       });
 
+      const status = order.orderStatus || "Confirmed";
+
       return `
         <div class="order-card">
           <div class="order-card-header">
@@ -581,7 +609,7 @@ async function openOrdersModal() {
               <span class="order-id">${escapeHTML(order.orderId)}</span>
               <div style="font-size: 11px; color: #888;">${orderDate}</div>
             </div>
-            <span class="order-status status-${(order.orderStatus || "Confirmed").toLowerCase()}">${escapeHTML(order.orderStatus || "Confirmed")}</span>
+            <span class="order-status status-${status.toLowerCase()}">${status === "Confirmed" ? "✓ Confirmed" : escapeHTML(status)}</span>
           </div>
 
           <div style="margin: 8px 0;">
@@ -598,7 +626,7 @@ async function openOrdersModal() {
           </div>
 
           <div style="border-top: 1px solid #ebdcd2; padding-top: 8px; margin-top: 8px; display: flex; justify-content: space-between; font-size: 13px;">
-            <span>Payment: <strong>${escapeHTML(order.paymentMethod)} (${order.paymentStatus})</strong></span>
+            <span>Payment: <strong>${escapeHTML(order.paymentMethod)} (${escapeHTML(order.paymentStatus || "Pending")})</strong></span>
             <span>Total: <strong style="color: #8c3b4a; font-size: 15px;">${money(order.totalAmount)}</strong></span>
           </div>
           <div style="font-size: 11px; color: #777; margin-top: 4px;">
@@ -655,7 +683,7 @@ async function openShopOrdersModal() {
       shopOrdersListContainer.innerHTML = `
         <div style="text-align: center; padding: 40px 10px;">
           <p style="font-size: 17px; font-weight: 600;">No customer orders received yet.</p>
-          <p class="muted">When customers purchase your items, their complete order details and addresses will appear here.</p>
+          <p class="muted">When customers purchase items, their order details and delivery addresses will appear here.</p>
         </div>
       `;
       return;
@@ -689,13 +717,11 @@ async function openShopOrdersModal() {
             </div>
           </div>
 
-          <!-- Customer Contact & Address Box -->
           <div class="order-customer-box">
             <div>👤 <strong>Customer:</strong> ${escapeHTML(order.customerName)} | 📞 <strong>Phone:</strong> <a href="tel:${escapeHTML(order.customerMobile)}" style="color:#8c3b4a; font-weight:600;">${escapeHTML(order.customerMobile)}</a> | ✉️ ${escapeHTML(order.customerEmail)}</div>
             <div style="margin-top: 4px;">📍 <strong>Delivery Address:</strong> ${escapeHTML(order.shippingAddress?.addressLine)}, ${escapeHTML(order.shippingAddress?.city)}, ${escapeHTML(order.shippingAddress?.state)} - <strong>${escapeHTML(order.shippingAddress?.pincode)}</strong></div>
           </div>
 
-          <!-- Items Ordered -->
           <div style="margin: 10px 0;">
             ${(order.items || []).map(it => `
               <div class="order-item-mini">
@@ -711,14 +737,13 @@ async function openShopOrdersModal() {
           </div>
 
           <div style="border-top: 1px solid #ebdcd2; padding-top: 8px; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 12px;">Payment: <strong>${escapeHTML(order.paymentMethod)}</strong> (${escapeHTML(order.paymentStatus)})</span>
+            <span style="font-size: 12px;">Payment: <strong>${escapeHTML(order.paymentMethod)}</strong> (${escapeHTML(order.paymentStatus || "Pending")})</span>
             <span style="font-size: 14px;">Total Order Value: <strong style="color: #8c3b4a; font-size: 16px;">${money(order.totalAmount)}</strong></span>
           </div>
         </div>
       `;
     }).join("");
 
-    // Add status change listeners
     shopOrdersListContainer.querySelectorAll(".status-select").forEach(select => {
       select.addEventListener("change", async (e) => {
         const orderId = e.target.dataset.orderId;
@@ -774,7 +799,6 @@ const imagePreview = $("#imagePreview");
 
 let activeImagePayload = "";
 
-// Image file upload handler
 if (prodImageFile) {
   prodImageFile.addEventListener("change", function () {
     const file = this.files[0];
@@ -800,7 +824,6 @@ if (prodImageFile) {
   });
 }
 
-// URL input listener
 if (prodImage) {
   prodImage.addEventListener("input", function () {
     const url = this.value.trim();
@@ -852,7 +875,7 @@ productForm.addEventListener("submit", async (e) => {
   const stock = Number($("#prodStock").value) || 15;
   const description = $("#prodDesc").value.trim();
 
-  const finalImage = activeImagePayload || $("#prodImage").value.trim() || "https://images.unsplash.com/photo-1583391733956-6c78276477e7?auto=format&fit=crop&w=800&q=80";
+  const finalImage = activeImagePayload || $("#prodImage").value.trim() || "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=80";
 
   const payload = {
     name,
@@ -886,8 +909,9 @@ productForm.addEventListener("submit", async (e) => {
     activeImagePayload = "";
     imagePreviewContainer.style.display = "none";
     closeProductModal();
-    showToast("🎉 Product saved directly into MongoDB store!");
+    showToast("🎉 Product saved permanently in store database!");
 
+    // Refresh products list from live database
     await fetchProductsFromBackend();
     $("#shop").scrollIntoView({ behavior: "smooth" });
 
@@ -895,7 +919,7 @@ productForm.addEventListener("submit", async (e) => {
     showToast(err.message || "Error adding product.");
   } finally {
     saveBtn.disabled = false;
-    saveBtn.textContent = "Save to Live Store ↗";
+    saveBtn.textContent = "Save Permanently to Store ↗";
   }
 });
 
@@ -997,6 +1021,7 @@ document.addEventListener("keydown", (event) => {
     closeCheckoutModal();
     ordersModal.hidden = true;
     shopOrdersModal.hidden = true;
+    orderSuccessModal.hidden = true;
     document.body.classList.remove("no-scroll");
   }
 });
