@@ -8,6 +8,9 @@
     "dev": "nodemon backend/server.js",
     "test": "node backend/test-server.js"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "keywords": [
     "ecommerce",
     "fashion",

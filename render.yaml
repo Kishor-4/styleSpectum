@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: stylespectrum
+    runtime: node
+    plan: free
+    region: singapore
+    branch: main
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        value: mongodb+srv://kishorchoudhary00045_db_user:Soyr5zz3ruG3Yyg8@stylespectrum.bmo50f8.mongodb.net/stylespectrum?retryWrites=true&w=majority&appName=Stylespectrum
+      - key: JWT_SECRET
+        value: 761884b53b32bb22a9d4d02c6000717b619f201e3ed9de4096a67f9b96d1bc31
