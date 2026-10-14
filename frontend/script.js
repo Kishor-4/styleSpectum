@@ -255,6 +255,14 @@ function renderProducts() {
             data-id="${escapeHTML(product.id)}"
             aria-label="${liked ? "Remove from" : "Add to"} wishlist"
           >${liked ? "♥" : "♡"}</button>
+          ${isShopkeeper ? `
+          <button
+            class="product-delete-btn"
+            data-action="delete-product"
+            data-id="${escapeHTML(product.id)}"
+            aria-label="Delete product"
+            title="Delete this product from catalog"
+          >🗑️</button>` : ""}
           <button
             class="quick-add"
             data-action="add"
@@ -269,6 +277,12 @@ function renderProducts() {
             <span class="product-price">${money(product.price)}</span>
             <span class="product-stock">${stock > 0 ? `${stock} left` : "Sold out"}</span>
           </div>
+          ${isShopkeeper ? `
+          <div class="product-seller-actions">
+            <button class="btn-delete-card" data-action="delete-product" data-id="${escapeHTML(product.id)}" type="button">
+              🗑️ Delete Product
+            </button>
+          </div>` : ""}
         </div>
       </article>
     `;
@@ -932,6 +946,53 @@ document.querySelectorAll(".category-card").forEach(card => {
   });
 });
 
+// --------------------------------------------------------------------------
+// 11. Shopkeeper Product Deletion (Permanent MongoDB sync)
+// --------------------------------------------------------------------------
+async function deleteProduct(id) {
+  if (!isShopkeeper) {
+    showToast("Only shopkeepers can delete products.");
+    return;
+  }
+
+  const product = products.find(p => p.id === id);
+  const prodName = product ? product.name : "this product";
+
+  const confirmDelete = window.confirm(`Are you sure you want to permanently delete "${prodName}" from the store?`);
+  if (!confirmDelete) return;
+
+  try {
+    const res = await fetch(getApiUrl(`/api/products/${id}`), {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${currentToken}`
+      }
+    });
+
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      throw new Error(data.message || "Failed to delete product.");
+    }
+
+    showToast(`🗑️ "${prodName}" deleted permanently!`);
+
+    // Remove from in-memory lists and local storage
+    products = products.filter(p => p.id !== id);
+    cart = cart.filter(p => p.id !== id);
+    wishlist = wishlist.filter(itemId => itemId !== id);
+    saveStorage(STORAGE.productsBackup, products);
+    saveStorage(STORAGE.cart, cart);
+    saveStorage(STORAGE.wishlist, wishlist);
+
+    updateHeader();
+    renderCart();
+    renderProducts();
+  } catch (err) {
+    console.error("Delete error:", err);
+    alert("Could not delete product: " + err.message);
+  }
+}
+
 $("#productGrid").addEventListener("click", (event) => {
   const button = event.target.closest("button[data-action]");
   if (!button) return;
@@ -939,6 +1000,7 @@ $("#productGrid").addEventListener("click", (event) => {
   const { action, id } = button.dataset;
   if (action === "add") addToCart(id);
   if (action === "wishlist") toggleWishlist(id);
+  if (action === "delete-product") deleteProduct(id);
 });
 
 $("#cartItems").addEventListener("click", (event) => {

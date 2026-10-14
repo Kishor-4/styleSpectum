@@ -578,27 +578,39 @@ router.get("/shop/my-products", protect, approvedShopkeeper, async (req, res) =>
 // ==========================================
 router.delete("/:id", protect, approvedShopkeeper, async (req, res) => {
   try {
-    if (isShopkeeperDbReady()) {
-      const deleted = await Product.findOneAndDelete({
-        _id: req.params.id,
-        shopkeeper: req.user._id
-      });
+    const { id } = req.params;
 
-      if (!deleted) {
+    if (isShopkeeperDbReady()) {
+      let product = null;
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        product = await Product.findById(id);
+      }
+
+      if (!product) {
         return res.status(404).json({
           success: false,
-          message: "Product not found or unauthorized to delete"
+          message: "Product not found in store database."
         });
       }
 
+      await Product.findByIdAndDelete(id);
+      console.log(`🗑️ Product '${product.name}' (ID: ${id}) permanently deleted by shopkeeper ${req.user.name || req.user.email}`);
+
       return res.json({
         success: true,
-        message: "Product deleted permanently from store"
+        message: `Product "${product.name}" deleted permanently from database!`
       });
     }
 
-    res.json({ success: true, message: "Product deleted" });
+    // In-memory fallback
+    const idx = verifiedStarterCatalog.findIndex((p, i) => `p_${i + 1}` === id || p._id === id);
+    if (idx !== -1) {
+      verifiedStarterCatalog.splice(idx, 1);
+    }
+
+    res.json({ success: true, message: "Product deleted successfully!" });
   } catch (error) {
+    console.error("Delete product error:", error.message);
     res.status(500).json({
       success: false,
       message: "Failed to delete product: " + error.message
