@@ -981,13 +981,21 @@ function renderCart() {
 
 function openCart() {
   $("#cartDrawer").classList.add("open");
-  $("#drawerBackdrop").hidden = false;
+  const bd = $("#drawerBackdrop");
+  if (bd) {
+    bd.hidden = false;
+    bd.classList.add("active");
+  }
   document.body.classList.add("no-scroll");
 }
 
 function closeCart() {
   $("#cartDrawer").classList.remove("open");
-  $("#drawerBackdrop").hidden = true;
+  const bd = $("#drawerBackdrop");
+  if (bd) {
+    bd.classList.remove("active");
+    bd.hidden = true;
+  }
   document.body.classList.remove("no-scroll");
 }
 
@@ -1681,13 +1689,19 @@ const closeMobileDrawer = $("#closeMobileDrawer");
 
 function openMobileDrawer() {
   if (mobileNavDrawer) mobileNavDrawer.classList.add("open");
-  if (mobileDrawerBackdrop) mobileDrawerBackdrop.classList.add("active");
+  if (mobileDrawerBackdrop) {
+    mobileDrawerBackdrop.hidden = false;
+    mobileDrawerBackdrop.classList.add("active");
+  }
   document.body.classList.add("no-scroll");
 }
 
 function closeMobileDrawerMenu() {
   if (mobileNavDrawer) mobileNavDrawer.classList.remove("open");
-  if (mobileDrawerBackdrop) mobileDrawerBackdrop.classList.remove("active");
+  if (mobileDrawerBackdrop) {
+    mobileDrawerBackdrop.classList.remove("active");
+    mobileDrawerBackdrop.hidden = true;
+  }
   document.body.classList.remove("no-scroll");
 }
 
@@ -1727,8 +1741,10 @@ document.addEventListener("keydown", (event) => {
 if ($("#year")) $("#year").textContent = new Date().getFullYear();
 
 // --------------------------------------------------------------------------
-// 16. Initialize Store & Dynamic Renders
+// 16. Initialize Store & Dynamic Renders (Guaranteed Clean Backdrops)
 // --------------------------------------------------------------------------
+closeCart();
+closeMobileDrawerMenu();
 updateRoleUI();
 updateHeader();
 renderCart();

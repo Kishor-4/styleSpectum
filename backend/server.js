@@ -29,8 +29,13 @@ app.get("/ping", (req, res) => {
 // Serve static frontend files with caching for lightning-fast loads
 app.use(
   express.static(path.join(__dirname, "../frontend"), {
-    maxAge: process.env.NODE_ENV === "production" ? "1d" : 0,
-    etag: true
+    maxAge: 0,
+    etag: true,
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith(".html")) {
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      }
+    }
   })
 );
 

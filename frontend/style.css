@@ -375,18 +375,18 @@ img {
 .mobile-drawer-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(15, 23, 42, 0.6);
   z-index: 250;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
 }
 
 .mobile-drawer-backdrop.active {
   opacity: 1;
   pointer-events: auto;
+  visibility: visible;
 }
 
 .mobile-nav-drawer {
@@ -1382,14 +1382,37 @@ h1 em, h2 em {
    Drawers & Modals
    ========================================================================== */
 
-.drawer-backdrop, .modal-backdrop {
+.drawer-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(15, 23, 42, 0.6);
   z-index: 200;
-  animation: fadeIn 0.25s ease;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.drawer-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  z-index: 300;
+  display: none !important;
+  place-items: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.modal-backdrop:not([hidden]) {
+  display: grid !important;
+  animation: fadeIn 0.2s ease;
 }
 
 @keyframes fadeIn {
@@ -1557,13 +1580,6 @@ h1 em, h2 em {
 }
 
 /* Modals */
-.modal-backdrop {
-  display: grid;
-  place-items: center;
-  padding: 20px;
-  overflow-y: auto;
-}
-
 .modal {
   width: min(540px, 100%);
   max-height: 90dvh;
