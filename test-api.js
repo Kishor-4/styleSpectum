@@ -176,6 +176,10 @@ async function runTests() {
   console.log("=================================================");
   console.log("       ALL VERIFICATION TESTS PASSED 100%!       ");
   console.log("=================================================");
+  process.exit(0);
 }
 
-runTests();
+runTests().catch((err) => {
+  console.error("Test error:", err);
+  process.exit(1);
+});

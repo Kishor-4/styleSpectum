@@ -17,6 +17,7 @@
     })();
   </script>
 
+  <link rel="stylesheet" href="style.css">
   <link rel="dns-prefetch" href="https://fonts.googleapis.com">
   <link rel="dns-prefetch" href="https://fonts.gstatic.com">
   <link rel="dns-prefetch" href="https://images.unsplash.com">
@@ -27,116 +28,102 @@
   <style>
     .role-badge {
       display: inline-block;
-      padding: 3px 8px;
-      border-radius: 6px;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
       font-size: 11px;
       font-weight: 700;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.6px;
       text-transform: uppercase;
       margin-top: 4px;
     }
     .badge-customer {
-      background: #eaf3ee;
-      color: #2e6945;
+      background: var(--success-bg);
+      color: var(--success);
     }
     .badge-shopkeeper {
-      background: #fcf1e8;
-      color: #a45325;
+      background: #fdf0e7;
+      color: #b25828;
     }
     .checkout-summary {
-      background: #faf7f2;
-      border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 16px;
-      font-size: 14px;
-      max-height: 140px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      max-height: 150px;
       overflow-y: auto;
     }
     .checkout-item-line {
       display: flex;
       justify-content: space-between;
       margin-bottom: 6px;
-      color: #555;
+      color: var(--ink-secondary);
+      font-size: 13px;
     }
     .order-card {
-      background: #faf7f2;
-      border: 1px solid #ebdcd2;
-      border-radius: 10px;
-      padding: 14px 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+    .order-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--cream-dark);
     }
     .order-card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px dashed #d9c8bd;
-      padding-bottom: 8px;
-      margin-bottom: 10px;
+      border-bottom: 1px dashed var(--line);
+      padding-bottom: 10px;
+      margin-bottom: 12px;
     }
     .order-id {
       font-weight: 700;
       font-size: 13px;
-      color: #8c3b4a;
-    }
-    .order-status {
-      padding: 3px 9px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 700;
-      background: #e1f5fe;
-      color: #0277bd;
-    }
-    .status-confirmed {
-      background: #e8f5e9;
-      color: #2e7d32;
-    }
-    .status-processing {
-      background: #e3f2fd;
-      color: #1565c0;
-    }
-    .status-shipped {
-      background: #fff3e0;
-      color: #e65100;
-    }
-    .status-delivered {
-      background: #e8f5e9;
-      color: #1b5e20;
-    }
-    .status-cancelled {
-      background: #ffebee;
-      color: #c62828;
+      color: var(--accent);
     }
     .order-item-mini {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       font-size: 13px;
-      margin-bottom: 8px;
-      border-bottom: 1px solid #f0e6de;
-      padding-bottom: 6px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid var(--line-light);
+      padding-bottom: 8px;
     }
     .order-item-mini img {
-      width: 44px;
-      height: 52px;
+      width: 48px;
+      height: 56px;
       object-fit: cover;
-      border-radius: 4px;
+      border-radius: 6px;
+      background: var(--cream);
     }
     .order-customer-box {
-      background: #f5ede6;
-      border-radius: 6px;
-      padding: 8px 12px;
-      margin-top: 8px;
+      background: var(--paper);
+      border: 1px solid var(--line-light);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      margin-top: 10px;
       font-size: 12px;
-      color: #444;
+      color: var(--ink-secondary);
     }
     .status-select {
-      padding: 4px 8px;
+      padding: 6px 10px;
       font-size: 12px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      background: white;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: var(--white);
       cursor: pointer;
+      outline: none;
+    }
+    .status-select:focus {
+      border-color: var(--accent);
     }
   </style>
 </head>
