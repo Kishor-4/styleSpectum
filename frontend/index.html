@@ -2,18 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#211713">
-  <title>StyleSpectrum | Your Style, Your Spectrum</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#dc2626">
+  <title>StyleSpectrum | Luxury Fashion & E-Commerce Platform</title>
 
-  <!-- STRICT AUTHENTICATION GUARD: First Register -> Then Login -> Then Website -->
+  <!-- Session Check (Allows Guest Browsing with 1-Click Sign-In, Role Awareness for Logged-In Customers & Shopkeepers) -->
   <script>
     (function() {
-      var token = localStorage.getItem("stylespectrum_token") || sessionStorage.getItem("stylespectrum_token");
-      var user = localStorage.getItem("stylespectrum_user") || sessionStorage.getItem("stylespectrum_user");
-      if (!token || !user) {
-        window.location.replace("register.html");
-      }
+      window.__isGuest = !localStorage.getItem("stylespectrum_token") && !sessionStorage.getItem("stylespectrum_token");
     })();
   </script>
 
@@ -24,55 +20,20 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://images.unsplash.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
   <style>
-    .role-badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: var(--radius-pill);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
-      margin-top: 4px;
-    }
-    .badge-customer {
-      background: var(--success-bg);
-      color: var(--success);
-    }
-    .badge-shopkeeper {
-      background: #fdf0e7;
-      color: #b25828;
-    }
-    .checkout-summary {
-      background: var(--paper);
-      border: 1px solid var(--line);
-      border-radius: var(--radius-md);
-      padding: 14px 18px;
-      margin-bottom: 18px;
-      font-size: 13px;
-      max-height: 150px;
-      overflow-y: auto;
-    }
-    .checkout-item-line {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 6px;
-      color: var(--ink-secondary);
-      font-size: 13px;
-    }
     .order-card {
       background: var(--white);
       border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
-      padding: 18px 20px;
-      margin-bottom: 16px;
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin-bottom: 14px;
       box-shadow: var(--shadow-sm);
       transition: var(--transition);
     }
     .order-card:hover {
       box-shadow: var(--shadow-md);
-      border-color: var(--cream-dark);
+      border-color: var(--line-focus);
     }
     .order-card-header {
       display: flex;
@@ -83,7 +44,7 @@
       margin-bottom: 12px;
     }
     .order-id {
-      font-weight: 700;
+      font-weight: 800;
       font-size: 13px;
       color: var(--accent);
     }
@@ -98,15 +59,16 @@
     }
     .order-item-mini img {
       width: 48px;
-      height: 56px;
+      height: 58px;
       object-fit: cover;
       border-radius: 6px;
-      background: var(--cream);
+      background: var(--bg-secondary);
+      border: 1px solid var(--line);
     }
     .order-customer-box {
-      background: var(--paper);
-      border: 1px solid var(--line-light);
-      border-radius: var(--radius-md);
+      background: var(--bg-secondary);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
       padding: 10px 14px;
       margin-top: 10px;
       font-size: 12px;
@@ -115,8 +77,8 @@
     .status-select {
       padding: 6px 10px;
       font-size: 12px;
-      font-weight: 600;
-      border-radius: var(--radius-sm);
+      font-weight: 700;
+      border-radius: var(--radius-xs);
       border: 1px solid var(--line);
       background: var(--white);
       cursor: pointer;
@@ -125,20 +87,45 @@
     .status-select:focus {
       border-color: var(--accent);
     }
+    .checkout-summary {
+      background: var(--bg-secondary);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    .checkout-item-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      color: var(--ink-secondary);
+      font-size: 13px;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
+  <!-- Top Announcement Bar -->
   <div class="announcement">
-    YOUR STYLE, YOUR SPECTRUM ✦ DISCOVER YOUR NEXT LOOK
+    <span>✨ SPRING / SUMMER 2026 EDIT</span>
+    <span class="badge-pill">FESTIVE SALE</span>
+    <span>✦ FREE DELIVERY ACROSS INDIA</span>
   </div>
 
+  <!-- Header -->
   <header class="header">
-    <a href="#" class="brand">
-      <span class="brand-icon">S</span>
-      <span>Style<span class="brand-light">Spectrum</span>
-        <small>FASHION FOR EVERY YOU</small>
-      </span>
-    </a>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <button class="menu-btn" id="menuToggle" aria-label="Open mobile menu" type="button">☰</button>
+      <a href="#" class="brand">
+        <span class="brand-icon">S</span>
+        <span>Style<span class="brand-light">Spectrum</span>
+          <small>FASHION FOR EVERY YOU</small>
+        </span>
+      </a>
+    </div>
 
     <nav class="nav">
       <a href="#home">Home</a>
@@ -154,7 +141,7 @@
         ＋ Add Product
       </button>
 
-      <button class="primary-btn" id="shopOrdersBtn" type="button" style="display: none; padding: 8px 14px; font-size: 12px; background: #6b333e;">
+      <button class="primary-btn" id="shopOrdersBtn" type="button" style="display: none; padding: 8px 14px; font-size: 12px; background: #991b1b;">
         📋 Customer Orders
       </button>
 
@@ -163,155 +150,265 @@
         📦 My Orders
       </button>
 
+      <!-- User Profile / Sign In Dropdown -->
       <div class="user-profile" id="userProfile">
-        <button class="outline-btn" id="profileToggle" type="button">
-          👤 <span id="profileName">My Profile</span> ▾
+        <button class="outline-btn" id="profileToggle" type="button" style="padding: 8px 14px; font-size: 12.5px;">
+          👤 <span id="profileName">Account</span> ▾
         </button>
 
         <div class="profile-menu" id="profileMenu" hidden>
-          <p id="profileEmail" style="font-size: 12px; margin: 0 0 4px; color: #666;"></p>
+          <p id="profileEmail" style="font-size: 12px; margin: 0 0 4px; color: var(--ink-muted);"></p>
           <div id="profileRoleBadge"></div>
-          <hr style="border: none; border-top: 1px solid #eee; margin: 8px 0;">
-          <button class="primary-btn" id="logoutBtn" type="button" style="width: 100%; padding: 8px;">
-            Logout
-          </button>
+          <hr style="border: none; border-top: 1px solid var(--line); margin: 10px 0;">
+          <div id="profileActionsBox">
+            <button class="primary-btn full-btn" id="logoutBtn" type="button" style="padding: 8px; font-size: 12px;">
+              Logout
+            </button>
+          </div>
         </div>
       </div>
 
-      <button class="icon-btn" id="searchFocus" aria-label="Search">⌕</button>
-      <button class="icon-btn" id="wishlistToggle" aria-label="Wishlist">
+      <button class="icon-btn" id="searchFocus" aria-label="Search" title="Search catalog">⌕</button>
+      <button class="icon-btn" id="wishlistToggle" aria-label="Wishlist" title="View wishlist">
         ♡ <span id="wishlistCount">0</span>
       </button>
-      <button class="cart-btn" id="cartToggle">
+      <button class="cart-btn" id="cartToggle" title="Open shopping bag">
         Bag <span id="cartCount">0</span>
       </button>
-      <button class="menu-btn" id="menuToggle" aria-label="Open menu">☰</button>
     </div>
   </header>
 
+  <!-- Mobile Slide-In Navigation Drawer -->
+  <div class="mobile-drawer-backdrop" id="mobileDrawerBackdrop"></div>
+  <aside class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Mobile navigation">
+    <div class="mobile-drawer-header">
+      <a href="#" class="brand">
+        <span class="brand-icon" style="width: 36px; height: 36px; font-size: 20px;">S</span>
+        <span style="font-size: 18px;">Style<span class="brand-light">Spectrum</span></span>
+      </a>
+      <button class="close-btn" id="closeMobileDrawer" aria-label="Close menu" type="button">×</button>
+    </div>
+
+    <!-- Mobile User Profile Status -->
+    <div class="mobile-user-box" id="mobileUserBox">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+        <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--accent-light); color: var(--accent); display: grid; place-items: center; font-weight: 800; font-size: 16px;">
+          👤
+        </div>
+        <div>
+          <strong id="mobileUserName" style="font-size: 13.5px; display: block;">Guest Shopper</strong>
+          <small id="mobileUserSub" style="color: var(--ink-muted); font-size: 11px;">Welcome to StyleSpectrum</small>
+        </div>
+      </div>
+      <div id="mobileRoleBadge"></div>
+    </div>
+
+    <!-- Quick Navigation Links -->
+    <div class="mobile-nav-links">
+      <a href="#home" class="mobile-nav-link"><span>🏠 Home</span> <span>↗</span></a>
+      <a href="#categories" class="mobile-nav-link"><span>✨ Categories</span> <span>↗</span></a>
+      <a href="#shop" class="mobile-nav-link"><span>🛍️ Shop All Styles</span> <span>↗</span></a>
+      <a href="#about" class="mobile-nav-link"><span>📖 Our Story</span> <span>↗</span></a>
+    </div>
+
+    <!-- Fast Category Chips -->
+    <div style="font-size: 11px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 10px;">
+      Explore by Category
+    </div>
+    <div class="mobile-categories-chips">
+      <button class="cat-chip" data-category="All">All Pieces</button>
+      <button class="cat-chip" data-category="Ladies Wear">Ladies Wear</button>
+      <button class="cat-chip" data-category="Sarees">Sarees</button>
+      <button class="cat-chip" data-category="Gents Wear">Gents Wear</button>
+      <button class="cat-chip" data-category="Kids Wear">Kids Wear</button>
+      <button class="cat-chip" data-category="Footwear">Footwear</button>
+      <button class="cat-chip" data-category="Accessories">Accessories</button>
+    </div>
+
+    <!-- Mobile Account Action Buttons -->
+    <div style="margin-top: auto; padding-top: 18px; border-top: 1px solid var(--line); display: grid; gap: 10px;">
+      <button class="outline-btn full-btn" id="mobileMyOrdersBtn" type="button" style="display: none; justify-content: flex-start; padding: 10px 14px;">
+        📦 My Orders History
+      </button>
+      <button class="primary-btn full-btn" id="mobileShopOrdersBtn" type="button" style="display: none; justify-content: flex-start; padding: 10px 14px; background: #991b1b;">
+        📋 Customer Orders Dashboard
+      </button>
+      <button class="primary-btn full-btn" id="mobileAddProductBtn" type="button" style="display: none; justify-content: flex-start; padding: 10px 14px;">
+        ＋ Add Product to Catalog
+      </button>
+      <div id="mobileAuthAction">
+        <a href="login.html" class="primary-btn full-btn" style="padding: 11px 14px;">Sign In / Register ↗</a>
+      </div>
+    </div>
+  </aside>
+
   <main>
+    <!-- HERO SECTION (Ultra-Bright, High-Contrast & Crisp) -->
     <section class="hero" id="home">
       <div class="hero-content">
-        <span class="eyebrow">THE NEW SEASON COLLECTION</span>
+        <span class="eyebrow">✦ SPRING / SUMMER 2026 EDIT ✦</span>
         <h1>Wear your<br><em>own story.</em></h1>
-        <p>From everyday essentials to statement looks,
-          discover fashion that feels uniquely you.</p>
+        <p>From handcrafted royal sarees and bespoke ethnic suits to crisp western tailoring and everyday footwear — discover pieces curated for every mood and moment.</p>
         <div class="hero-actions">
-          <a href="#shop" class="primary-btn">Explore Collection ↗</a>
-          <a href="#categories" class="text-link">Discover Categories</a>
+          <a href="#shop" class="primary-btn" style="padding: 14px 26px; font-size: 14px;">Explore Collection ↗</a>
+          <a href="#categories" class="outline-btn" style="padding: 14px 22px; font-size: 14px;">Browse Categories</a>
         </div>
         <div class="hero-note">
-          <span>✦</span> A style for every mood, a look for every moment.
+          <span>★</span> <strong>4.9/5 Rating</strong> • Handcrafted fabrics & 100% verified styles across India.
         </div>
       </div>
       <div class="hero-visual">
         <img
-          src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1100&q=85"
-          alt="Fashion collection"
+          src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=88"
+          alt="High fashion luxury collection"
         >
-        <div class="hero-stamp">STYLE<br>WITHOUT<br>LIMITS ✳</div>
+        <!-- Floating Glass Stat Badges -->
+        <div class="hero-floating-badge hero-badge-top">
+          <span style="font-size: 18px; color: var(--gold);">⭐</span>
+          <div>
+            <div style="font-size: 12px; font-weight: 800;">4.9 / 5.0 Rating</div>
+            <small style="color: var(--ink-muted); font-size: 10px; font-weight: 600;">15,000+ Verified Buyers</small>
+          </div>
+        </div>
+        <div class="hero-floating-badge hero-badge-bottom">
+          <span style="font-size: 18px; color: var(--accent);">🏷️</span>
+          <div>
+            <div style="font-size: 12px; font-weight: 800; color: var(--accent);">Up to 40% OFF</div>
+            <small style="color: var(--ink-muted); font-size: 10px; font-weight: 600;">Festive Season Special</small>
+          </div>
+        </div>
         <div class="hero-caption">
-          <span>01 / NEW EDIT</span>
-          <span>Find your signature style.</span>
+          <span>01 / NEW LUXURY EDIT</span>
+          <span>Find your signature look today.</span>
         </div>
       </div>
     </section>
 
+    <!-- TRUST STRIP -->
     <section class="trust-strip">
-      <span>✳ Handcrafted & Curated Styles</span>
-      <span>✳ 100% Genuine Fabrics</span>
-      <span>✳ Fast Delivery Across India</span>
-      <span>✳ Easy Returns & Exchanges</span>
+      <div class="trust-item">
+        <div class="trust-icon">🚚</div>
+        <div>
+          <strong>Express Delivery</strong>
+          <div style="font-size: 11px; color: var(--ink-muted);">Fast dispatch across India</div>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">💎</div>
+        <div>
+          <strong>100% Genuine Fabrics</strong>
+          <div style="font-size: 11px; color: var(--ink-muted);">Handpicked artisan quality</div>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">🔄</div>
+        <div>
+          <strong>Easy 7-Day Returns</strong>
+          <div style="font-size: 11px; color: var(--ink-muted);">Hassle-free exchanges</div>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">🔒</div>
+        <div>
+          <strong>Secure Checkout</strong>
+          <div style="font-size: 11px; color: var(--ink-muted);">UPI, Cards & COD Available</div>
+        </div>
+      </div>
     </section>
 
+    <!-- CATEGORIES SECTION -->
     <section class="section categories-section" id="categories">
       <div class="section-heading">
         <div>
-          <span class="eyebrow">FIND YOUR FIT</span>
+          <span class="eyebrow">CURATED COLLECTIONS</span>
           <h2>Shop by <em>category.</em></h2>
         </div>
-        <p>Different moods. Different moments.<br>One place to find your style.</p>
+        <p>Explore handcrafted ethnic grace, modern western cuts,<br>and everyday essentials designed to inspire.</p>
       </div>
 
       <div class="category-grid">
-        <button class="category-card cat-ladies" data-category="Ladies Wear">
-          <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=650&q=80" alt="Ladies fashion">
+        <button class="category-card cat-ladies" data-category="Ladies Wear" type="button">
+          <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=85" alt="Ladies fashion wear">
           <span class="category-overlay">
-            <small>01 — WOMEN</small>
+            <small>01 — WOMEN'S EDIT</small>
             <strong>Ladies Wear</strong>
-            <span>Explore collection ↗</span>
+            <span>Explore Collection ↗</span>
           </span>
         </button>
 
-        <button class="category-card cat-sarees" data-category="Sarees">
-          <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=650&q=80" alt="Saree collection">
+        <button class="category-card cat-sarees" data-category="Sarees" type="button">
+          <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=85" alt="Handcrafted ethnic sarees">
           <span class="category-overlay">
-            <small>02 — ETHNIC</small>
+            <small>02 — ROYAL ETHNIC</small>
             <strong>Sarees</strong>
             <span>Grace in every drape ↗</span>
           </span>
         </button>
 
-        <button class="category-card cat-gents" data-category="Gents Wear">
-          <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=650&q=80" alt="Men's fashion">
+        <button class="category-card cat-gents" data-category="Gents Wear" type="button">
+          <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=85" alt="Men's fashion tailoring">
           <span class="category-overlay">
-            <small>03 — MEN</small>
+            <small>03 — GENTLEMEN</small>
             <strong>Gents Wear</strong>
-            <span>Explore collection ↗</span>
+            <span>Sharp Tailoring ↗</span>
           </span>
         </button>
 
-        <button class="category-card cat-kids" data-category="Kids Wear">
-          <img src="https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?auto=format&fit=crop&w=650&q=80" alt="Kids fashion">
+        <button class="category-card cat-kids" data-category="Kids Wear" type="button">
+          <img src="https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?auto=format&fit=crop&w=800&q=85" alt="Kids playful collection">
           <span class="category-overlay">
             <small>04 — LITTLE ONES</small>
             <strong>Kids Wear</strong>
-            <span>Little looks, big joy ↗</span>
+            <span>Joyful Styles ↗</span>
           </span>
         </button>
 
-        <button class="category-card cat-footwear" data-category="Footwear">
-          <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=650&q=80" alt="Footwear">
+        <button class="category-card cat-footwear" data-category="Footwear" type="button">
+          <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=800&q=85" alt="Designer footwear & sneakers">
           <span class="category-overlay">
-            <small>05 — FINISHING TOUCH</small>
+            <small>05 — FOOTWEAR</small>
             <strong>Footwear</strong>
-            <span>Step into style ↗</span>
+            <span>Step into Style ↗</span>
           </span>
         </button>
 
-        <button class="category-card cat-accessories" data-category="Accessories">
-          <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=650&q=80" alt="Fashion accessories">
+        <button class="category-card cat-accessories" data-category="Accessories" type="button">
+          <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=85" alt="Fashion accessories and watches">
           <span class="category-overlay">
             <small>06 — THE DETAILS</small>
             <strong>Accessories</strong>
-            <span>Complete your look ↗</span>
+            <span>Complete the Look ↗</span>
           </span>
         </button>
       </div>
     </section>
 
+    <!-- PROMO BANNER -->
     <section class="promo-banner">
       <div>
-        <span class="eyebrow">A LITTLE SOMETHING NEW</span>
+        <span class="eyebrow">EXCLUSIVE FESTIVE RELEASE</span>
         <h2>Make room for<br><em>your next favourite.</em></h2>
+        <p style="color: rgba(255, 255, 255, 0.9); margin-top: 10px; font-size: 15px;">Discover artisan sarees, tailored blazers, and luxury accessories with 100% verified authentic fabrics.</p>
       </div>
-      <a href="#shop" class="light-btn">Shop the edit ↗</a>
+      <a href="#shop" class="light-btn" style="padding: 14px 28px; font-size: 14px;">Shop the edit ↗</a>
     </section>
 
+    <!-- SHOP SECTION -->
     <section class="section shop-section" id="shop">
       <div class="section-heading">
         <div>
-          <span class="eyebrow">THE STYLE EDIT</span>
+          <span class="eyebrow">THE STYLE CATALOG</span>
           <h2 id="shopTitle">Pieces you'll <em>love.</em></h2>
-          <p class="muted" id="resultCount">Discover the collection.</p>
+          <p class="muted" id="resultCount">Discovering collection...</p>
         </div>
-        <button class="outline-btn" id="showAll">View all products ↗</button>
+        <button class="outline-btn" id="showAll" type="button">View all products ↗</button>
       </div>
 
+      <!-- Toolbar: Search & Select Filters -->
       <div class="shop-toolbar">
         <label class="search-box">
           <span>⌕</span>
-          <input id="searchInput" type="search" placeholder="Search kurtis, sarees, shirts, blazers, sneakers...">
+          <input id="searchInput" type="search" placeholder="Search kurtis, sarees, shirts, sneakers, accessories..." aria-label="Search products">
         </label>
 
         <div class="toolbar-filters">
@@ -326,7 +423,7 @@
           </select>
 
           <select id="sortFilter" aria-label="Sort products">
-            <option value="featured">Featured</option>
+            <option value="featured">Featured Picks</option>
             <option value="low">Price: Low to High</option>
             <option value="high">Price: High to Low</option>
             <option value="name">Name: A to Z</option>
@@ -334,33 +431,38 @@
         </div>
       </div>
 
+      <!-- Product Grid (Populated dynamically by script.js) -->
       <div class="product-grid" id="productGrid"></div>
+
+      <!-- Empty State -->
       <div class="empty-state" id="emptyState" hidden>
         <span>⌕</span>
         <h3>No pieces found</h3>
-        <p>Try another search or category.</p>
-        <button class="primary-btn" id="resetFilters">Clear filters</button>
+        <p>Try another search keyword or switch categories.</p>
+        <button class="primary-btn" id="resetFilters" type="button">Clear all filters</button>
       </div>
     </section>
 
-    <!-- SHOPKEEPER BANNER: Strictly hidden for Customer, only displayed when shopkeeper logs in! -->
+    <!-- SHOPKEEPER BANNER (Only displayed for shopkeepers) -->
     <section class="shopkeeper-banner" id="shopkeeperBanner" style="display: none;">
       <div>
         <span class="eyebrow">SELLER / SHOPKEEPER DASHBOARD</span>
         <h2>Manage your catalog<br><em>& showcase new styles.</em></h2>
-        <p id="shopkeeperBannerSubtitle">Upload photos from device, set prices, and save directly into StyleSpectrum database.</p>
+        <p id="shopkeeperBannerSubtitle">Upload photos directly from your device, configure pricing, and save directly into StyleSpectrum MongoDB database.</p>
       </div>
-      <button class="primary-btn" id="openProductForm">＋ Add a Product</button>
+      <button class="primary-btn" id="openProductForm" type="button">＋ Add a Product</button>
     </section>
 
+    <!-- NEWSLETTER / STORY SECTION -->
     <section class="newsletter" id="about">
-      <span class="eyebrow">A NOTE FROM US</span>
+      <span class="eyebrow">OUR STORY & PHILOSOPHY</span>
       <h2>Fashion should feel<br><em>like you.</em></h2>
-      <p>StyleSpectrum brings different styles together in one place — so you can find the look that feels right for you.</p>
+      <p>StyleSpectrum brings different styles, fabrics, and artisan stories together in one place — so you can express every shade of your unique identity.</p>
       <a href="#categories" class="text-link">Find your spectrum ↗</a>
     </section>
   </main>
 
+  <!-- FOOTER -->
   <footer class="footer">
     <a href="#home" class="brand footer-brand">
       <span class="brand-icon">S</span>
@@ -368,8 +470,8 @@
         <small>YOUR STYLE, YOUR SPECTRUM</small>
       </span>
     </a>
-    <p>Different styles. One destination.</p>
-    <span>© <span id="year"></span> StyleSpectrum</span>
+    <p>Handcrafted fashion. Infinite styles. Delivered across India.</p>
+    <span>© <span id="year"></span> StyleSpectrum. All rights reserved.</span>
   </footer>
 
   <!-- CART BAG DRAWER -->
@@ -377,16 +479,16 @@
   <aside class="drawer" id="cartDrawer" aria-label="Shopping bag">
     <div class="drawer-header">
       <div>
-        <span class="eyebrow">YOUR SELECTION</span>
+        <span class="eyebrow">SHOPPING BAG</span>
         <h2>Your Bag <span id="drawerCount">(0)</span></h2>
       </div>
-      <button class="close-btn" id="closeCart" aria-label="Close bag">×</button>
+      <button class="close-btn" id="closeCart" aria-label="Close bag" type="button">×</button>
     </div>
     <div class="drawer-items" id="cartItems"></div>
     <div class="drawer-footer">
-      <div class="total-row"><span>Subtotal</span><strong id="cartTotal">₹0</strong></div>
+      <div class="total-row"><span>Subtotal:</span><strong id="cartTotal">₹0</strong></div>
       <p class="muted">Free shipping on all prepaid & COD orders across India.</p>
-      <button class="primary-btn full-btn" id="checkoutBtn">Continue to Checkout ↗</button>
+      <button class="primary-btn full-btn" id="checkoutBtn" type="button">Continue to Checkout ↗</button>
     </div>
   </aside>
 
@@ -398,14 +500,14 @@
           <span class="eyebrow">SECURE CHECKOUT</span>
           <h2 id="checkoutTitle">Delivery & Payment</h2>
         </div>
-        <button class="close-btn" id="closeCheckout" aria-label="Close checkout">×</button>
+        <button class="close-btn" id="closeCheckout" aria-label="Close checkout" type="button">×</button>
       </div>
 
       <div class="checkout-summary" id="checkoutSummary"></div>
 
       <form id="checkoutForm">
         <label>Full Delivery Name *
-          <input name="fullName" id="checkFullName" required placeholder="Receiver's name">
+          <input name="fullName" id="checkFullName" required placeholder="Receiver's full name">
         </label>
         <div class="form-row">
           <label>Mobile Number *
@@ -416,7 +518,7 @@
           </label>
         </div>
         <label>Delivery Address (House/Street/Area) *
-          <textarea name="addressLine" id="checkAddress" rows="2" required placeholder="Complete delivery address"></textarea>
+          <textarea name="addressLine" id="checkAddress" rows="2" required placeholder="Complete delivery address with landmark"></textarea>
         </label>
         <div class="form-row">
           <label>City *
@@ -429,49 +531,49 @@
         <label>Payment Method
           <select name="paymentMethod" id="checkPaymentMethod">
             <option value="COD">Cash on Delivery (COD)</option>
-            <option value="UPI">UPI / GooglePay / PhonePe (Demo)</option>
-            <option value="CARD">Debit / Credit Card (Demo)</option>
+            <option value="UPI">UPI / GooglePay / PhonePe (Instant)</option>
+            <option value="CARD">Debit / Credit Card / NetBanking</option>
           </select>
         </label>
-        <button type="submit" class="primary-btn full-btn" id="placeOrderBtn" style="margin-top: 14px;">
+        <button type="submit" class="primary-btn full-btn" id="placeOrderBtn" style="margin-top: 14px; padding: 14px;">
           Confirm & Place Order (<span id="checkoutTotalBtn">₹0</span>) ↗
         </button>
       </form>
     </section>
   </div>
 
-  <!-- ORDER SUCCESS / CONFIRMED MODAL (Real E-Commerce Confirmation Screen) -->
+  <!-- ORDER SUCCESS / CONFIRMED MODAL -->
   <div class="modal-backdrop" id="orderSuccessModal" hidden>
     <section class="modal" role="dialog" aria-modal="true" style="max-width: 500px; text-align: center; padding: 32px 24px;">
-      <div style="width: 68px; height: 68px; background: #e8f5e9; color: #2e7d32; border-radius: 50%; display: grid; place-items: center; font-size: 34px; margin: 0 auto 14px;">
+      <div style="width: 68px; height: 68px; background: var(--success-bg); color: var(--success); border: 2px solid var(--success-border); border-radius: 50%; display: grid; place-items: center; font-size: 32px; margin: 0 auto 16px;">
         ✓
       </div>
-      <span class="eyebrow" style="color: #2e7d32; font-weight: 700; letter-spacing: 1px;">ORDER PLACED & CONFIRMED</span>
-      <h2 style="margin: 8px 0 6px; font-size: 24px;">Thank You for Shopping!</h2>
-      <p style="color: #666; font-size: 13px; margin: 0 0 16px;">We have received your order and saved it in StyleSpectrum database.</p>
+      <span class="eyebrow" style="background: var(--success-bg); color: var(--success); border-color: var(--success-border);">ORDER PLACED & CONFIRMED</span>
+      <h2 style="margin: 12px 0 6px; font-size: 24px;">Thank You for Shopping!</h2>
+      <p style="color: var(--ink-muted); font-size: 13.5px; margin: 0 0 18px;">Your order has been recorded and saved in StyleSpectrum database.</p>
 
-      <div style="background: #faf7f2; border: 1px dashed #d9c8bd; border-radius: 10px; padding: 14px; margin-bottom: 20px; text-align: left;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-          <span style="font-size: 13px; color: #666;">Order Tracking ID:</span>
-          <strong style="color: #8c3b4a;" id="successOrderId">ORD-XXXX</strong>
+      <div style="background: var(--bg-secondary); border: 1px dashed var(--line); border-radius: var(--radius-md); padding: 16px; margin-bottom: 20px; text-align: left;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+          <span style="font-size: 13px; color: var(--ink-muted);">Order Tracking ID:</span>
+          <strong style="color: var(--accent);" id="successOrderId">ORD-XXXX</strong>
         </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-          <span style="font-size: 13px; color: #666;">Status:</span>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+          <span style="font-size: 13px; color: var(--ink-muted);">Status:</span>
           <span class="order-status status-confirmed">Confirmed</span>
         </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-          <span style="font-size: 13px; color: #666;">Estimated Delivery:</span>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+          <span style="font-size: 13px; color: var(--ink-muted);">Estimated Delivery:</span>
           <strong id="successDeliveryDate">Within 3-4 Business Days</strong>
         </div>
-        <div style="display: flex; justify-content: space-between; border-top: 1px solid #ebdcd2; padding-top: 8px; margin-top: 8px;">
-          <span style="font-size: 14px; font-weight: 600;">Total Amount:</span>
-          <strong style="font-size: 16px; color: #8c3b4a;" id="successTotalAmount">₹0</strong>
+        <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 10px; margin-top: 10px;">
+          <span style="font-size: 14px; font-weight: 700;">Total Amount Paid / COD:</span>
+          <strong style="font-size: 17px; color: var(--accent);" id="successTotalAmount">₹0</strong>
         </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
         <button class="outline-btn" id="successViewOrdersBtn" type="button" style="padding: 12px; font-size: 13px;">
-          📦 View in My Orders
+          📦 View My Orders
         </button>
         <button class="primary-btn" id="successContinueBtn" type="button" style="padding: 12px; font-size: 13px;">
           Continue Shopping 🛍️
@@ -482,32 +584,32 @@
 
   <!-- MY ORDERS MODAL (For Customers) -->
   <div class="modal-backdrop" id="ordersModal" hidden>
-    <section class="modal" role="dialog" aria-modal="true" style="max-width: 600px;">
+    <section class="modal" role="dialog" aria-modal="true" style="max-width: 620px;">
       <div class="modal-header">
         <div>
-          <span class="eyebrow">CUSTOMER DASHBOARD</span>
+          <span class="eyebrow">CUSTOMER ACCOUNT</span>
           <h2>My Order History</h2>
         </div>
-        <button class="close-btn" id="closeOrdersModal" aria-label="Close orders">×</button>
+        <button class="close-btn" id="closeOrdersModal" aria-label="Close orders" type="button">×</button>
       </div>
-      <div class="orders-list" id="ordersListContainer" style="max-height: 400px; overflow-y: auto; padding: 4px;">
+      <div class="orders-list" id="ordersListContainer" style="max-height: 420px; overflow-y: auto; padding: 4px;">
         <p class="muted">Loading orders...</p>
       </div>
     </section>
   </div>
 
-  <!-- SHOPKEEPER CUSTOMER ORDERS DASHBOARD (For Shopkeepers) -->
+  <!-- SHOPKEEPER CUSTOMER ORDERS DASHBOARD -->
   <div class="modal-backdrop" id="shopOrdersModal" hidden>
-    <section class="modal" role="dialog" aria-modal="true" style="max-width: 760px;">
+    <section class="modal" role="dialog" aria-modal="true" style="max-width: 780px;">
       <div class="modal-header">
         <div>
-          <span class="eyebrow">SELLER / SHOPKEEPER DASHBOARD</span>
+          <span class="eyebrow">SELLER PORTAL</span>
           <h2>Customer Orders Received</h2>
         </div>
-        <button class="close-btn" id="closeShopOrdersModal" aria-label="Close orders">×</button>
+        <button class="close-btn" id="closeShopOrdersModal" aria-label="Close orders" type="button">×</button>
       </div>
-      <p class="muted" style="margin-top: 0;">View customer purchases, delivery addresses, and update fulfillment status in real time.</p>
-      <div class="orders-list" id="shopOrdersListContainer" style="max-height: 480px; overflow-y: auto; padding: 4px;">
+      <p class="muted" style="margin-top: 0;">View customer purchases, shipping addresses, and update fulfillment status in real time.</p>
+      <div class="orders-list" id="shopOrdersListContainer" style="max-height: 500px; overflow-y: auto; padding: 4px;">
         <p class="muted">Loading customer orders...</p>
       </div>
     </section>
@@ -519,22 +621,22 @@
       <div class="modal-header">
         <div>
           <span class="eyebrow">SHOPKEEPER INVENTORY</span>
-          <h2 id="modalTitle">Add a product to store</h2>
+          <h2 id="modalTitle">Add a Product to Store</h2>
         </div>
-        <button class="close-btn" id="closeProductForm" aria-label="Close form">×</button>
+        <button class="close-btn" id="closeProductForm" aria-label="Close form" type="button">×</button>
       </div>
 
-      <p class="muted" style="margin-top: 0;">Upload product images from your device or paste a URL. Saved permanently in MongoDB (stylespectrum_shopkeeper).</p>
+      <p class="muted" style="margin-top: 0;">Upload product images from your phone/PC or paste an image link. Persisted permanently in MongoDB.</p>
 
       <form id="productForm">
-        <label>Product name *
-          <input name="name" id="prodName" required maxlength="100" placeholder="e.g. Classic Embroidered Kurti">
+        <label>Product Name *
+          <input name="name" id="prodName" required maxlength="100" placeholder="e.g. Handcrafted Bandhani Silk Saree">
         </label>
         <div class="form-row">
-          <label>Price (₹) *
+          <label>Selling Price (₹) *
             <input name="price" id="prodPrice" required type="number" min="1" step="1" placeholder="1499">
           </label>
-          <label>Original / MRP (₹)
+          <label>Original MRP (₹)
             <input name="originalPrice" id="prodOrigPrice" type="number" min="0" step="1" placeholder="1999">
           </label>
         </div>
@@ -549,13 +651,13 @@
               <option value="Accessories">Accessories</option>
             </select>
           </label>
-          <label>Stock quantity *
+          <label>Stock Quantity *
             <input name="stock" id="prodStock" type="number" min="0" step="1" value="15" required>
           </label>
         </div>
 
         <!-- PHOTO UPLOAD & PREVIEW SECTION -->
-        <label>Upload Product Photo (From PC / Mobile)
+        <label>Upload Product Photo (From Mobile / PC)
           <input type="file" id="prodImageFile" accept="image/*">
         </label>
         <label>Or Paste Image URL
@@ -563,14 +665,14 @@
         </label>
 
         <div id="imagePreviewContainer" style="display: none; margin: 10px 0; text-align: center;">
-          <p style="font-size: 11px; color: #666; margin: 0 0 4px;">Photo Preview:</p>
-          <img id="imagePreview" alt="Product preview" style="max-height: 160px; max-width: 100%; border-radius: 8px; object-fit: cover; border: 1px solid #ddd; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+          <p style="font-size: 11px; color: var(--ink-muted); margin: 0 0 4px;">Photo Preview:</p>
+          <img id="imagePreview" alt="Product preview" style="max-height: 160px; max-width: 100%; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--line); box-shadow: var(--shadow-sm);">
         </div>
 
         <label>Description *
-          <textarea name="description" id="prodDesc" maxlength="400" rows="3" required placeholder="Describe fabrics, styling tips, fit..."></textarea>
+          <textarea name="description" id="prodDesc" maxlength="400" rows="3" required placeholder="Describe fabrics, weave, styling tips, fit..."></textarea>
         </label>
-        <button type="submit" class="primary-btn full-btn" id="saveProductBtn">Save Permanently to Store ↗</button>
+        <button type="submit" class="primary-btn full-btn" id="saveProductBtn" style="padding: 13px;">Save Permanently to Store ↗</button>
       </form>
     </section>
   </div>

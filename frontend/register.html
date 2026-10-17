@@ -2,30 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#dc2626">
   <title>Create Account | StyleSpectrum</title>
   <link rel="stylesheet" href="style.css">
   <link rel="dns-prefetch" href="https://fonts.googleapis.com">
   <link rel="dns-prefetch" href="https://fonts.gstatic.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
   <style>
     .auth-page {
       min-height: 100vh;
       display: grid;
       place-items: center;
-      padding: 32px 16px;
-      background: #faf7f2;
+      padding: 36px 16px;
+      background: #f8fafc;
     }
 
     .auth-card {
       width: 100%;
       max-width: 480px;
-      padding: 32px;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0,0,0,.08);
+      padding: 36px 32px;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 12px 36px rgba(15, 23, 42, 0.08);
+      border: 1px solid #e2e8f0;
     }
 
     .auth-brand {
@@ -36,49 +38,72 @@
     .auth-brand-icon {
       display: inline-grid;
       place-items: center;
-      width: 44px;
-      height: 44px;
-      background: #8c3b4a;
+      width: 46px;
+      height: 46px;
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
       color: white;
       font-family: 'Playfair Display', Georgia, serif;
       font-size: 26px;
-      border-radius: 10px;
+      font-weight: 700;
+      border-radius: 12px;
       margin: 0 auto;
+      box-shadow: 0 4px 14px rgba(220, 38, 38, 0.25);
     }
 
     .auth-brand h2 {
       font-size: 22px;
-      font-weight: 700;
-      margin: 6px 0 2px;
-      color: #211713;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin: 10px 0 2px;
+      color: #0f172a;
     }
 
     .auth-brand small {
-      color: #888;
+      color: #64748b;
       letter-spacing: 2px;
-      font-size: 9px;
+      font-size: 9.5px;
       text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .flow-steps {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin: 14px 0 18px;
+      font-size: 11.5px;
       font-weight: 600;
+      color: #94a3b8;
+    }
+
+    .flow-step.active {
+      color: #dc2626;
+      font-weight: 800;
     }
 
     .auth-card h1 {
-      margin: 8px 0 4px;
+      margin: 4px 0 6px;
       font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
       text-align: center;
+      color: #0f172a;
     }
 
     .auth-card p {
-      color: #666;
+      color: #475569;
       line-height: 1.5;
       text-align: center;
-      margin-top: 0;
+      margin: 0 0 18px;
+      font-size: 13.5px;
     }
 
     .role-selector {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin: 18px 0 10px;
+      margin: 18px 0 14px;
     }
 
     .role-option {
@@ -95,66 +120,75 @@
       align-items: center;
       justify-content: center;
       padding: 12px 8px;
-      border: 2px solid #ddd;
-      border-radius: 10px;
+      border: 2px solid #e2e8f0;
+      background: #f8fafc;
+      border-radius: 12px;
       cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      color: #444;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #475569;
       transition: all 0.2s ease;
       text-align: center;
     }
 
     .role-label span {
-      font-size: 20px;
+      font-size: 22px;
       margin-bottom: 4px;
     }
 
     .role-label small {
-      font-size: 11px;
-      font-weight: 400;
-      color: #777;
+      font-size: 10.5px;
+      font-weight: 500;
+      color: #64748b;
     }
 
     .role-option input:checked + .role-label {
-      border-color: #8c3b4a;
-      background: #fdf5f6;
-      color: #8c3b4a;
+      border-color: #dc2626;
+      background: #fef2f2;
+      color: #dc2626;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.12);
     }
 
     .auth-card label {
       display: block;
       margin: 14px 0 6px;
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: 700;
+      font-size: 13px;
+      color: #334155;
     }
 
     .auth-card input {
       width: 100%;
-      padding: 11px 12px;
-      border: 1px solid #ddd;
+      padding: 12px 14px;
+      border: 1px solid #e2e8f0;
       border-radius: 8px;
       font: inherit;
+      font-size: 14px;
       box-sizing: border-box;
+      background: #ffffff;
+      color: #0f172a;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     .auth-card input:focus {
-      border-color: #8c3b4a;
+      border-color: #dc2626;
       outline: none;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
     }
 
     .shopkeeper-section {
-      background: #fdf8f5;
-      border: 1px dashed #d5b8ab;
-      padding: 12px 14px;
-      border-radius: 10px;
-      margin-top: 14px;
+      background: #fff7ed;
+      border: 1px dashed #fed7aa;
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin-top: 16px;
     }
 
     .shopkeeper-section h4 {
       margin: 0 0 6px;
-      color: #8c3b4a;
+      color: #ea580c;
       font-size: 13px;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -162,39 +196,50 @@
     .auth-submit {
       width: 100%;
       margin-top: 22px;
-      padding: 13px;
+      padding: 14px;
       border: none;
       border-radius: 8px;
-      background: #8c3b4a;
+      background: #dc2626;
       color: white;
-      font-size: 16px;
-      font-weight: 600;
+      font-size: 15px;
+      font-weight: 700;
       cursor: pointer;
-      transition: background 0.2s ease;
+      box-shadow: 0 4px 14px rgba(220, 38, 38, 0.25);
+      transition: all 0.2s ease;
     }
 
     .auth-submit:hover {
-      background: #732f3c;
+      background: #b91c1c;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(220, 38, 38, 0.35);
     }
 
     .auth-message {
-      margin-top: 14px;
+      margin-top: 16px;
       overflow-wrap: anywhere;
-      font-size: 14px;
+      font-size: 13px;
       text-align: center;
+      font-weight: 600;
     }
 
     .auth-footer {
-      margin-top: 20px;
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid #f1f5f9;
       text-align: center;
-      font-size: 14px;
+      font-size: 13px;
+      color: #64748b;
     }
 
     .auth-footer a {
-      color: #8c3b4a;
-      font-weight: 600;
+      color: #dc2626;
+      font-weight: 700;
       text-decoration: none;
       margin-left: 4px;
+    }
+
+    .auth-footer a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -203,17 +248,17 @@
     <section class="auth-card">
       <div class="auth-brand">
         <div class="auth-brand-icon">S</div>
-        <h2>Style<span style="font-weight: 400;">Spectrum</span></h2>
+        <h2>Style<span style="font-weight: 400; color: #dc2626;">Spectrum</span></h2>
         <small>Fashion for every you</small>
       </div>
 
       <!-- Flow Step Indicator: Register -> Login -> Website -->
-      <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin: 14px 0 18px; font-size: 11px; font-weight: 600; color: #999;">
-        <span style="color: #8c3b4a; font-weight: 700;">1. Register</span>
-        <span style="color: #ccc;">→</span>
-        <span>2. Login</span>
-        <span style="color: #ccc;">→</span>
-        <span>3. Store</span>
+      <div class="flow-steps">
+        <span class="flow-step active">1. Register</span>
+        <span style="color: #cbd5e1;">→</span>
+        <span class="flow-step">2. Login</span>
+        <span style="color: #cbd5e1;">→</span>
+        <span class="flow-step">3. Store</span>
       </div>
 
       <h1>Create Your Account</h1>
@@ -275,7 +320,7 @@
         </div>
 
         <button class="auth-submit" type="submit" id="submitBtn">
-          Create Account
+          Create Account ↗
         </button>
 
         <p id="registerMessage" class="auth-message"
@@ -284,7 +329,13 @@
 
       <div class="auth-footer">
         Already have an account?
-        <a href="login.html">Login</a>
+        <a href="login.html">Sign In Here ↗</a>
+      </div>
+
+      <div style="margin-top: 14px; text-align: center;">
+        <a href="index.html" class="outline-btn full-btn" style="padding: 10px; font-size: 13px;">
+          🛍️ Continue to Store as Guest ↗
+        </a>
       </div>
     </section>
   </main>
