@@ -10,38 +10,38 @@ const router = express.Router();
 const verifiedStarterCatalog = [
   // --- 1. LADIES WEAR (5) ---
   {
-    name: "Embroidered Anarkali Kurti Set",
+    name: "Embroidered Festive Kurti Set",
     category: "Ladies Wear",
     price: 1299,
     originalPrice: 1899,
     stock: 20,
     tag: "BESTSELLER",
-    description: "Graceful Chanderi silk Anarkali kurti adorned with intricate Zari neckline embroidery and dupatta.",
-    images: ["https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=80"],
+    description: "Graceful festive cotton silk kurti set with intricate neckline embroidery and bright contrast styling.",
+    images: ["https://plus.unsplash.com/premium_photo-1682097935697-2ed1efce421a?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Heritage",
     shopName: "Rajwada Boutique"
   },
   {
-    name: "Royal Velvet Festive Kurta Set",
+    name: "Handcrafted Chanderi Print Tunic",
     category: "Ladies Wear",
-    price: 1999,
-    originalPrice: 2699,
+    price: 1599,
+    originalPrice: 2299,
     stock: 14,
     tag: "NEW",
-    description: "Plush micro-velvet festive straight suit with detailed gota patti borders and matching pants.",
-    images: ["https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80"],
+    description: "Pure Chanderi handloom tunic with floral handblock motifs and comfortable breezy silhouette.",
+    images: ["https://plus.unsplash.com/premium_photo-1661964468389-faa0dec64469?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Heritage",
     shopName: "Rajwada Boutique"
   },
   {
-    name: "Designer Pastel Sharara Outfit",
+    name: "Designer Pastel Georgette Sharara Outfit",
     category: "Ladies Wear",
     price: 2499,
     originalPrice: 3299,
     stock: 12,
     tag: "TRENDING",
-    description: "Contemporary flared georgette sharara set in soft blush tones with handcrafted sequin work.",
-    images: ["https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=800&q=80"],
+    description: "Contemporary flared georgette sharara set in soft pastel tones with handcrafted sequin work and dupatta.",
+    images: ["https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Luxe",
     shopName: "Glamour Threads"
   },
@@ -52,25 +52,26 @@ const verifiedStarterCatalog = [
     originalPrice: 2199,
     stock: 16,
     tag: "POPULAR",
-    description: "Flowing breathable cotton tiered maxi dress with floral handblock print and tassel details.",
+    description: "Flowing breathable tiered maxi dress with blooming floral prints and a flattering wrap waist.",
     images: ["https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Modern",
     shopName: "Urban Vogue"
   },
   {
-    name: "Chic Linen Tunic & Palazzo Set",
+    name: "Chic Embroidered Floral Sundress",
     category: "Ladies Wear",
     price: 1699,
     originalPrice: 2399,
     stock: 15,
     tag: "ESSENTIAL",
-    description: "Relaxed pure organic linen kurta paired with wide-leg cropped palazzo trousers.",
-    images: ["https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80"],
+    description: "Vibrant crimson fit-and-flare dress detailed with golden threadwork embroidery and waist belt.",
+    images: ["https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Modern",
     shopName: "Urban Vogue"
   },
 
-  // --- 2. SAREES (5) ---
+
+  // --- 2. SAREES (5) - 100% AUTHENTIC INDIAN SAREES ---
   {
     name: "Banarasi Katan Silk Saree",
     category: "Sarees",
@@ -78,8 +79,8 @@ const verifiedStarterCatalog = [
     originalPrice: 3999,
     stock: 10,
     tag: "ROYAL",
-    description: "Pure Banarasi Katan silk saree woven with traditional floral jaal and antique golden zari work.",
-    images: ["https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=800&q=80"],
+    description: "Pure royal purple Banarasi Katan silk saree intricately hand-woven with antique golden zari jaal and grand pallu.",
+    images: ["https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80"],
     brand: "Varanasi Weaves",
     shopName: "Kashi Handlooms"
   },
@@ -90,94 +91,94 @@ const verifiedStarterCatalog = [
     originalPrice: 4799,
     stock: 8,
     tag: "BRIDAL",
-    description: "Exquisite ruby red Kanjivaram silk saree featuring pure zari pallu and authentic temple border.",
+    description: "Exquisite ruby red bridal Kanjivaram silk saree featuring pure zari temple borders and royal gold pallu.",
     images: ["https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=800&q=80"],
     brand: "Varanasi Weaves",
     shopName: "Kashi Handlooms"
   },
   {
-    name: "Floral Organza Digital Print Saree",
+    name: "Royal Green Heritage Kanjivaram Saree",
     category: "Sarees",
-    price: 1499,
-    originalPrice: 2199,
-    stock: 18,
-    tag: "POPULAR",
-    description: "Lightweight and airy pure organza silk saree finished with soft pastel blooming florals.",
-    images: ["https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=800&q=80"],
-    brand: "Spectrum Ethnic",
-    shopName: "Surat Sarees Hub"
-  },
-  {
-    name: "Handcrafted Chanderi Zari Saree",
-    category: "Sarees",
-    price: 2199,
-    originalPrice: 2999,
+    price: 3299,
+    originalPrice: 4499,
     stock: 14,
     tag: "HERITAGE",
-    description: "Sheer Chanderi handloom cotton silk saree with golden booti motifs and delicate resham work.",
-    images: ["https://images.unsplash.com/photo-1574634534894-89d7576c8259?auto=format&fit=crop&w=800&q=80"],
+    description: "Majestic emerald green handwoven Kanjivaram saree with rich golden zari borders and intricate floral boota work.",
+    images: ["https://images.unsplash.com/photo-1753981031189-27bb7bd1c079?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Ethnic",
     shopName: "Surat Sarees Hub"
   },
   {
-    name: "Traditional Bandhani Silk Saree",
+    name: "Traditional Jaipuri Bandhani Silk Saree",
     category: "Sarees",
     price: 2599,
     originalPrice: 3499,
     stock: 12,
     tag: "FESTIVE",
-    description: "Vibrant dual-toned Jaipuri Bandhej saree on pure gajji silk with heavy zari pallu.",
-    images: ["https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80"],
+    description: "Authentic festive Jaipuri Bandhej & Leheriya saree on pure gajji silk with golden zari border and delicate fringe tassels.",
+    images: ["https://images.unsplash.com/photo-1746265350981-538f4bb1e737?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Ethnic",
     shopName: "Rajasthan Weaves"
+  },
+  {
+    name: "Handcrafted Chanderi Booti Silk Saree",
+    category: "Sarees",
+    price: 2199,
+    originalPrice: 2999,
+    stock: 18,
+    tag: "POPULAR",
+    description: "Elegant teal blue Chanderi silk saree adorned with all-over golden booti weave and broad zari border.",
+    images: ["https://plus.unsplash.com/premium_photo-1669977749819-d8737b4408f7?auto=format&fit=crop&w=800&q=80"],
+    brand: "Spectrum Ethnic",
+    shopName: "Surat Sarees Hub"
   },
 
   // --- 3. GENTS WEAR (5) ---
   {
-    name: "Classic Casual Oxford Shirt",
+    name: "Classic Casual Chambray Shirt",
     category: "Gents Wear",
     price: 1199,
     originalPrice: 1699,
     stock: 25,
     tag: "BESTSELLER",
-    description: "Crisp button-down collar casual shirt made with 100% breathable organic cotton.",
-    images: ["https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=800&q=80"],
+    description: "Crisp button-down collar casual chambray shirt crafted with 100% breathable organic cotton.",
+    images: ["https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Man",
     shopName: "Urban Stitch Co."
   },
   {
-    name: "Tailored Royal Navy Blazer",
+    name: "Tailored Royal Navy Blazer Suit",
     category: "Gents Wear",
     price: 2999,
     originalPrice: 4299,
     stock: 10,
     tag: "NEW",
-    description: "Structured slim-fit single breasted blazer crafted for evening celebrations and formal occasions.",
-    images: ["https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=800&q=80"],
+    description: "Structured slim-fit single-breasted navy blazer tailored for evening celebrations and formal events.",
+    images: ["https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Man",
     shopName: "Gentleman Suite"
   },
   {
-    name: "Modern Everyday Ribbed T-Shirt",
+    name: "Modern Everyday Ribbed White T-Shirt",
     category: "Gents Wear",
     price: 599,
     originalPrice: 899,
     stock: 35,
     tag: "ESSENTIAL",
-    description: "Heavyweight combed cotton t-shirt with ribbed crew neck for ultimate everyday comfort.",
+    description: "Heavyweight combed cotton t-shirt with ribbed crew neck for ultimate everyday comfort and durability.",
     images: ["https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Man",
     shopName: "Urban Stitch Co."
   },
   {
-    name: "Royal Heritage Kurta Pajama",
+    name: "Royal Heritage Indo-Western Sherwani",
     category: "Gents Wear",
-    price: 1899,
-    originalPrice: 2599,
+    price: 3499,
+    originalPrice: 4999,
     stock: 14,
     tag: "ROYAL",
-    description: "Classic silk-blend ethnic kurta with embroidered mandarin collar and matching churidar.",
-    images: ["https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80"],
+    description: "Regal gold-beige silk Indo-Western sherwani with asymmetric button placket, mandarin collar and pocket square.",
+    images: ["https://plus.unsplash.com/premium_photo-1682090778813-3938ba76ee57?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Man",
     shopName: "Gentleman Suite"
   },
@@ -188,7 +189,7 @@ const verifiedStarterCatalog = [
     originalPrice: 5999,
     stock: 8,
     tag: "PREMIUM",
-    description: "Sophisticated two-piece charcoal formal suit tailored from wrinkle-resistant poly-viscose fabric.",
+    description: "Sophisticated three-piece check formal suit tailored with structured waistcoat and trousers from poly-viscose.",
     images: ["https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Man",
     shopName: "Gentleman Suite"
@@ -196,26 +197,26 @@ const verifiedStarterCatalog = [
 
   // --- 4. KIDS WEAR (5) ---
   {
-    name: "Little Explorer Denim Dungaree Set",
+    name: "Little Gentleman Cardigan & Shorts Set",
     category: "Kids Wear",
     price: 899,
     originalPrice: 1299,
     stock: 16,
     tag: "POPULAR",
-    description: "Soft bio-washed denim dungaree with playful striped inner tee for all-day comfort and play.",
+    description: "Dapper knit cardigan set with matching tailored shorts, bowtie and crisp white inner polo for young boys.",
     images: ["https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Kids",
     shopName: "Tiny Tots Fashion"
   },
   {
-    name: "Princess Birthday Party Tulle Frock",
+    name: "Princess Birthday Party Ruffled White Frock",
     category: "Kids Wear",
     price: 1399,
     originalPrice: 1999,
     stock: 12,
     tag: "NEW",
-    description: "Magical multi-layered tulle party frock with soft satin lining and delicate floral accents.",
-    images: ["https://images.unsplash.com/photo-1503919005314-30d93d07d823?auto=format&fit=crop&w=800&q=80"],
+    description: "Pure white embroidered cotton party frock with flutter ruffle sleeves and soft breathable lining.",
+    images: ["https://images.unsplash.com/photo-1578178107900-e8ef3855b9cf?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Kids",
     shopName: "Tiny Tots Fashion"
   },
@@ -226,31 +227,31 @@ const verifiedStarterCatalog = [
     originalPrice: 799,
     stock: 28,
     tag: "ESSENTIAL",
-    description: "Ultra-soft tagless cotton t-shirt designed for energetic kids and daily wash durability.",
-    images: ["https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80"],
+    description: "Ultra-soft tagless cotton t-shirt designed for energetic kids with reinforced stitching and vibrant color.",
+    images: ["https://images.unsplash.com/photo-1604226199793-ccd78b0395ba?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Kids",
     shopName: "Junior Closet"
   },
   {
-    name: "Playtime Pastel Romper & Shorts",
+    name: "Cozy Fleece Hooded Teddy Romper",
     category: "Kids Wear",
-    price: 699,
-    originalPrice: 999,
+    price: 799,
+    originalPrice: 1199,
     stock: 18,
     tag: "COMFORT",
-    description: "Breathable jersey cotton romper with snap buttons for easy dressing and breezy summer days.",
+    description: "Warm plush sherpa fleece baby jumpsuit featuring cute teddy-bear ears and front zipper for easy dressing.",
     images: ["https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Kids",
     shopName: "Junior Closet"
   },
   {
-    name: "Kids Festive Kurta Pajama Set",
+    name: "Pure Organic Cotton Baby Tee & Cap Set",
     category: "Kids Wear",
-    price: 1199,
-    originalPrice: 1699,
+    price: 699,
+    originalPrice: 999,
     stock: 14,
     tag: "FESTIVE",
-    description: "Festive printed cotton silk kurta with contrast pyjama, skin-friendly for traditional festivities.",
+    description: "Hypoallergenic organic cotton essential baby starter set with soft crewneck tee, knit pompom beanie and socks.",
     images: ["https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Kids",
     shopName: "Tiny Tots Fashion"
@@ -264,32 +265,8 @@ const verifiedStarterCatalog = [
     originalPrice: 2499,
     stock: 18,
     tag: "BESTSELLER",
-    description: "Cushioned memory-foam sole sneakers in sleek white vegan leather for modern streetwear style.",
-    images: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80"],
-    brand: "Spectrum Walk",
-    shopName: "Sole Studio"
-  },
-  {
-    name: "Handcrafted Embroidered Mojari",
-    category: "Footwear",
-    price: 1099,
-    originalPrice: 1599,
-    stock: 15,
-    tag: "TRADITIONAL",
-    description: "Authentic Jaipuri genuine leather jutti hand-embroidered with dabka and zardozi threadwork.",
-    images: ["https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=800&q=80"],
-    brand: "Spectrum Walk",
-    shopName: "Rajasthan Craft Shoes"
-  },
-  {
-    name: "Classic Pointed Stiletto Heels",
-    category: "Footwear",
-    price: 1899,
-    originalPrice: 2799,
-    stock: 10,
-    tag: "NEW",
-    description: "Elegantly sculpted stiletto pumps with padded insoles to elevate any evening look.",
-    images: ["https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=80"],
+    description: "Sleek low-top white leather sneakers with perforated detailing and durable cushioned rubber cupsole.",
+    images: ["https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Walk",
     shopName: "Sole Studio"
   },
@@ -300,107 +277,124 @@ const verifiedStarterCatalog = [
     originalPrice: 3499,
     stock: 12,
     tag: "CLASSIC",
-    description: "Hand-burnished genuine leather lace-up oxford shoes with non-slip durable TPR sole.",
-    images: ["https://images.unsplash.com/photo-1533867617858-e7b97e060509?auto=format&fit=crop&w=800&q=80"],
+    description: "Handcrafted genuine burnished tan leather lace-up oxford shoes with non-slip durable TPR sole.",
+    images: ["https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Walk",
     shopName: "Sole Studio"
   },
   {
-    name: "Comfort Strappy Summer Sandals",
+    name: "Classic Pointed Stiletto Heels",
     category: "Footwear",
-    price: 799,
-    originalPrice: 1199,
+    price: 1899,
+    originalPrice: 2799,
+    stock: 10,
+    tag: "NEW",
+    description: "Elegantly sculpted pointed stiletto pumps with floral satin finish and cushioned insoles for evening glamour.",
+    images: ["https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=80"],
+    brand: "Spectrum Walk",
+    shopName: "Sole Studio"
+  },
+  {
+    name: "Comfort Strappy Platform Sandals",
+    category: "Footwear",
+    price: 899,
+    originalPrice: 1399,
     stock: 22,
     tag: "SUMMER",
-    description: "Ergonomic flexible footbed sandals with adjustable buckle straps for everyday walkability.",
+    description: "Lightweight ergonomic platform sandals with cross-over leather straps and adjustable ankle buckle.",
     images: ["https://images.unsplash.com/photo-1562273138-f46be4ebdf33?auto=format&fit=crop&w=800&q=80"],
+    brand: "Spectrum Walk",
+    shopName: "Sole Studio"
+  },
+  {
+    name: "Retro Multi-Tone Chunky Sneakers",
+    category: "Footwear",
+    price: 1999,
+    originalPrice: 2899,
+    stock: 15,
+    tag: "TRENDING",
+    description: "Contemporary streetwear chunky sneakers featuring multi-color suede panels, breathable mesh and shock-absorbent sole.",
+    images: ["https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Walk",
     shopName: "Sole Studio"
   },
 
   // --- 6. ACCESSORIES (5) ---
   {
-    name: "Italian Structured Shoulder Bag",
+    name: "Italian Structured Quilted Shoulder Bag",
     category: "Accessories",
-    price: 1499,
-    originalPrice: 2199,
+    price: 1599,
+    originalPrice: 2399,
     stock: 16,
     tag: "BESTSELLER",
-    description: "Premium textured faux-leather shoulder tote featuring gold-toned hardware and double compartments.",
+    description: "Premium quilted faux-leather shoulder handbag featuring gold-toned curb chain and double-zip compartments.",
     images: ["https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Luxe",
     shopName: "Moda Accessories"
   },
   {
-    name: "Steel Mesh Chronograph Watch",
+    name: "Luxury Chronograph Brown Leather Watch",
     category: "Accessories",
-    price: 1899,
-    originalPrice: 2999,
+    price: 2199,
+    originalPrice: 3299,
     stock: 14,
     tag: "TRENDING",
-    description: "Minimalist brushed stainless steel dial with interchangeable quick-release mesh strap.",
+    description: "Hand-assembled luxury chronograph dial with alligator-embossed genuine leather strap and sub-dials.",
     images: ["https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Time",
     shopName: "Chrono Watch Co."
   },
   {
-    name: "Kundan Pearl Statement Choker",
+    name: "Delicate Layered Silver Choker Necklace",
     category: "Accessories",
-    price: 1299,
-    originalPrice: 1899,
+    price: 999,
+    originalPrice: 1499,
     stock: 12,
     tag: "POPULAR",
-    description: "Handcrafted royal Kundan necklace set with fresh water pearl drop earrings.",
+    description: "Sterling silver layered choker chain with delicate beading and heart pendant for effortless elegance.",
     images: ["https://images.unsplash.com/photo-1611652022419-a9419f74343d?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Jewels",
     shopName: "Royal Ornaments"
   },
   {
-    name: "Classic Polarized Aviator Sunglasses",
+    name: "Vintage Gold Round Polarized Sunglasses",
     category: "Accessories",
-    price: 999,
-    originalPrice: 1499,
+    price: 1099,
+    originalPrice: 1699,
     stock: 20,
     tag: "UV-PROTECT",
-    description: "Lightweight metal frame aviators with UV400 polarized scratch-resistant gradient lenses.",
+    description: "Classic lightweight gold metal wire frames with UV400 polarized green-tinted scratch-resistant lenses.",
     images: ["https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Luxe",
     shopName: "Moda Accessories"
   },
   {
-    name: "Designer Minimalist Leather Watch",
+    name: "Skeleton Automatic Leather Wristwatch",
     category: "Accessories",
-    price: 1699,
-    originalPrice: 2499,
+    price: 2499,
+    originalPrice: 3699,
     stock: 15,
     tag: "NEW",
-    description: "Clean sunray dial with genuine tan leather band, Japanese quartz movement, and 3ATM water resistance.",
-    images: ["https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80"],
+    description: "Exhibition open-heart skeleton mechanical movement encased in brushed brass with rich chestnut leather band.",
+    images: ["https://images.unsplash.com/photo-1618215649872-6e3143a716ec?auto=format&fit=crop&w=800&q=80"],
     brand: "Spectrum Time",
     shopName: "Chrono Watch Co."
   }
 ];
 
 // Helper to ensure MongoDB Atlas has verified 30 products on initialization
-// NEVER DELETES products added by shopkeepers!
+// Cleans up any test remnants, updates starter catalog, and NEVER DELETES products added by real shopkeepers!
 async function ensureCatalogSeeded() {
   try {
     if (!isShopkeeperDbReady()) return;
 
-    const count = await Product.countDocuments();
-    if (count === 0) {
-      console.log(`Database empty. Seeding initial ${verifiedStarterCatalog.length} products...`);
-      await Product.insertMany(verifiedStarterCatalog);
-      console.log(`✅ Stored ${verifiedStarterCatalog.length} verified products in stylespectrum_shopkeeper MongoDB!`);
-    } else {
-      // Update any starter products that may have broken 404 images from earlier runs
-      for (const item of verifiedStarterCatalog) {
-        await Product.updateOne(
-          { name: item.name, shopkeeper: { $exists: false } },
-          { $set: { images: item.images, category: item.category, description: item.description } }
-        );
-      }
-    }
+    // Clean up any test remnants
+    await Product.deleteMany({ name: "Handcrafted Zari Silk Dupatta", shopkeeper: { $exists: false } });
+
+    // Refresh default starter products (only those without shopkeeper)
+    await Product.deleteMany({ shopkeeper: { $exists: false } });
+    await Product.insertMany(verifiedStarterCatalog);
+    console.log(`✅ Refreshed ${verifiedStarterCatalog.length} verified products in stylespectrum_shopkeeper MongoDB!`);
   } catch (err) {
     console.warn("Catalog seed check:", err.message);
   }

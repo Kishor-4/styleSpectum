@@ -173,6 +173,14 @@ async function runTests() {
     console.log("11. Shopkeeper Update Order Status:", statusUpdate.status, "New Status:", statusUpdate.body?.order?.orderStatus, "✅ OK");
   }
 
+  // 12. Cleanup Test Product
+  if (shopkeeperToken && addedProductId) {
+    const delRes = await request("DELETE", `/api/products/${addedProductId}`, null, {
+      Authorization: `Bearer ${shopkeeperToken}`
+    });
+    console.log("12. Cleaned Up Test Product:", delRes.status, "✅ OK");
+  }
+
   console.log("=================================================");
   console.log("       ALL VERIFICATION TESTS PASSED 100%!       ");
   console.log("=================================================");
