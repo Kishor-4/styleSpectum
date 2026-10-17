@@ -1,0 +1,23 @@
+name: Keep StyleSpectrum Alive
+
+on:
+  schedule:
+    # Run every 10 minutes to prevent Render free tier from sleeping (sleeps after 15m)
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render Service
+        run: |
+          URLS=(
+            "https://stylespectrum-store.onrender.com/ping"
+            "https://stylespectrum.onrender.com/ping"
+          )
+          for url in "${URLS[@]}"; do
+            echo "Pinging: $url"
+            curl -s -o /dev/null -w "Status: %{http_code}\n" --max-time 20 "$url" || true
+          done
+          echo "Ping complete! Render server kept awake and responsive."

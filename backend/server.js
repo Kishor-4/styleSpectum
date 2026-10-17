@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const compression = require("compression");
 require("dotenv").config();
 
 // Initialize dual database connections
@@ -13,12 +14,25 @@ const orderRoutes = require("./routes/orderRoutes");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Enable gzip compression for ultra-fast asset delivery
+app.use(compression());
+
 app.use(cors());
 app.use(express.json({ limit: "15mb" }));
 app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 
-// Serve static frontend files (ideal for local testing & Render single-service deployment)
-app.use(express.static(path.join(__dirname, "../frontend")));
+// Ultra-fast lightweight ping endpoint (Used by keep-alive pinger, cron, UptimeRobot)
+app.get("/ping", (req, res) => {
+  res.status(200).send("pong");
+});
+
+// Serve static frontend files with caching for lightning-fast loads
+app.use(
+  express.static(path.join(__dirname, "../frontend"), {
+    maxAge: process.env.NODE_ENV === "production" ? "1d" : 0,
+    etag: true
+  })
+);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
@@ -54,7 +68,34 @@ app.listen(PORT, () => {
   console.log(`  StyleSpectrum Server running on port ${PORT}`);
   console.log(`  Frontend: http://localhost:${PORT}`);
   console.log(`  Health API: http://localhost:${PORT}/api/health`);
+  console.log(`  Ping API: http://localhost:${PORT}/ping`);
   console.log(`===============================================`);
+
+  // Auto Keep-Alive for Render (Prevents Free Tier 15-minute Sleep / Cold Starts)
+  const renderAppUrl =
+    process.env.RENDER_EXTERNAL_URL ||
+    process.env.APP_URL ||
+    (process.env.NODE_ENV === "production"
+      ? "https://stylespectrum-store.onrender.com"
+      : null);
+
+  if (renderAppUrl && process.env.NODE_ENV === "production") {
+    const PING_INTERVAL = 10 * 60 * 1000; // Every 10 minutes (Render sleeps after 15 min)
+    const cleanUrl = renderAppUrl.replace(/\/$/, "");
+    console.log(`⚡ Keep-Alive auto-pinger initialized for: ${cleanUrl}/ping`);
+
+    setInterval(async () => {
+      try {
+        const pingEndpoint = `${cleanUrl}/ping`;
+        const res = await fetch(pingEndpoint);
+        if (res.ok) {
+          console.log(`[Keep-Alive] Self-ping successful to prevent Render sleep (Status: ${res.status})`);
+        }
+      } catch (err) {
+        console.warn(`[Keep-Alive] Ping notice:`, err.message);
+      }
+    }, PING_INTERVAL);
+  }
 });
 
 module.exports = app;

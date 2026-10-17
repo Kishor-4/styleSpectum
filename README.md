@@ -33,6 +33,26 @@ You can deploy this application directly to **Render** with a single click:
 
 ---
 
+## ⚡ Superfast Instant Loading & Cold-Start Prevention
+
+Render's free tier automatically puts inactive web services into "sleep mode" after 15 minutes of inactivity, which causes a **50-90 second delay (Cold Start)** when you next click the link.
+
+We have integrated 3 powerful solutions so your project starts **instantly within 1-2 seconds**:
+
+1. **Automatic Keep-Alive Pinger (Built-in Server):**
+   - The server includes an internal self-ping mechanism that pings `/ping` every 10 minutes when running on Render, keeping the container warm 24/7.
+2. **Automated GitHub Actions Cron:**
+   - A GitHub Action (`.github/workflows/keep-alive.yml`) runs every 10 minutes automatically to keep the server awake.
+3. **UptimeRobot Free Monitoring (Recommended for 100% 24/7 Uptime):**
+   - Go to [UptimeRobot.com](https://uptimerobot.com/) (Free account).
+   - Click **Add New Monitor** ➔ Type: `HTTP(s)`.
+   - Friendly Name: `StyleSpectrum`.
+   - URL: `https://stylespectrum-store.onrender.com/ping` (or your Render URL).
+   - Monitoring Interval: `5 minutes` or `10 minutes`.
+   - Click **Create Monitor**. Render will now **NEVER** go to sleep, opening instantly on every click!
+
+---
+
 ## 🔄 User Journey & Role Segregation
 
 1. **Step 1: Registration (`register.html`)**
